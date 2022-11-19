@@ -11,23 +11,33 @@ namespace FakeDbContext
         public readonly decimal d = 0m;
         public readonly long l = 0;
 
-        public readonly Dictionary<Type, object> defaultValues = new Dictionary<Type, object>()
+        public Dictionary<Type, object> DefaultValues 
+        { 
+            get { return _defaultValues; }
+            set { _defaultValues = value; } 
+        }
+
+        private Dictionary<Type, object> _defaultValues = new Dictionary<Type, object>()
         {
             { typeof(string), "_" },
-            { typeof(bool), false },
+            { typeof(bool), true },
+            { typeof(Int16), (Int16)1 },
             { typeof(int), 1 },
-            { typeof(long), 1 },
+            { typeof(uint), 1u },
+            { typeof(long), 1l },
+            { typeof(ulong), 1ul },
             { typeof(decimal), 1m },
+            { typeof(double), 1.0d },
+            { typeof(float), 1.0f },
             { typeof(char), '_' },
             { typeof(byte), (byte)('_') },
-            { typeof(double), 0 },
             { typeof(DateTime), DateTime.Now },
             { typeof(List<>), null },
         };
         #endregion
 
         public T? CreateFake<T>() where T : new()
-            => GenerateFake(new T());
+            => (T)GenerateFake(new T());
 
         public object? CreateFake(Type T)
             => GenerateFake(Activator.CreateInstance(T));
@@ -54,14 +64,14 @@ namespace FakeDbContext
                     IList list = (IList)instance;
 
                     object item;
-                    if (defaultValues.ContainsKey(itemType))
-                        item = defaultValues[itemType];
+                    if (DefaultValues.ContainsKey(itemType))
+                        item = DefaultValues[itemType];
                     else
                         item = CreateFake(itemType);
                     list.Add(item); //whatever you need to add
                     prop.SetValue(o, list, null);
                 }
-                else if (defaultValues.ContainsKey(propertyType))
+                else if (DefaultValues.ContainsKey(propertyType))
                 {
                     if (!TrySetPrimitiveValue(o, prop, propertyType, nullable))
                     {
@@ -115,7 +125,7 @@ namespace FakeDbContext
         {
             try
             {
-                var val = defaultValues[type];
+                var val = DefaultValues[type];
                 //if (nullable)
                 //  val = ;
                 prop.SetValue(o, val);
