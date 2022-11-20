@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    internal class ComplexObject
+    public class ComplexObject
     {
         public ComplexObject obj { get; set; }
         public Dictionary<string, object> keyValuePairs { get; set; }

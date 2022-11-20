@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Tests
 {
-    internal class RecursiveObjectTest
+    public class RecursiveObjectTest
     {
     }
 }

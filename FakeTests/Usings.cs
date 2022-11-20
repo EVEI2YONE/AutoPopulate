@@ -8,3 +8,4 @@ global using System.Threading.Tasks;
 
 global using FakeDbContext;
 global using FakeTests.Classes;
+global using FakeTests;

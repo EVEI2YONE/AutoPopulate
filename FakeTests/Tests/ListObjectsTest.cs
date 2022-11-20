@@ -1,17 +1,12 @@
 namespace FakeTests.Tests
 {
-    public class ListObjectsTest
+    public class ListObjectsTest : TestBase
     {
-        [SetUp]
-        public void Setup()
+        public void ListObjects_Test1()
         {
+            var response = (ListObjects)generator.CreateFake(typeof(ListObjects));
 
-        }
-
-        [Test]
-        public void Test1()
-        {
-            Assert.Pass();
+            Assert.IsNotNull(response);
         }
     }
 }

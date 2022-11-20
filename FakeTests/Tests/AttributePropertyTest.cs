@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Tests
 {
-    internal class AttributePropertyTest
+    public class AttributePropertyTest
     {
     }
 }

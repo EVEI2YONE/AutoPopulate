@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    internal class NullablePrimitive
+    public class NullablePrimitive : ITestableObject
     {
         public bool? _bool { get; set; }
         public int? _int { get; set; }
@@ -14,5 +14,22 @@
         public long? _long { get; set; }
         public ulong? _ulong { get; set; }
         public string _string { get; set; }
+
+        public bool ItemsSuccessfullyPopulated()
+        {
+            if(_bool.NotEqualTo(true)) return false;
+            if (_int.NotEqualTo(1)) return false;
+            if (_uint.NotEqualTo<UInt32>(1)) return false;
+            if (_char.NotEqualTo('_')) return false;
+            if (_double.NotEqualTo(1)) return false;
+            if (_decimal.NotEqualTo(1)) return false;
+            if (_float.NotEqualTo(1)) return false;
+            if (_byte.NotEqualTo((byte)'_')) return false;
+            if (_short.NotEqualTo((short)1)) return false;
+            if (_long.NotEqualTo(1)) return false;
+            if (_ulong.NotEqualTo((ulong)1)) return false;
+            if (_string != "_") return false;
+            return true;
+        }
     }
 }

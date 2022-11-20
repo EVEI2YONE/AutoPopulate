@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    internal class CustomSetter
+    public class CustomSetter
     {
         private string private_custom_setter;
         public string custom_setter

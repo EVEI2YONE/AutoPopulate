@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace FakeTests
 {
     [TestFixture]
-    internal class TestBase
+    public class TestBase
     {
         protected AutoPopulate generator;
         [OneTimeSetUp] public void OneTimeSetUp()

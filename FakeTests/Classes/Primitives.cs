@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    internal class Primitives
+    public class Primitives : ITestableObject
     {
         public bool _bool { get; set; }
         public int _int { get; set; }
@@ -14,5 +14,22 @@
         public long _long { get; set; }
         public ulong _ulong { get; set; }
         public string _string { get; set; }
+
+        public bool ItemsSuccessfullyPopulated()
+        {
+            if (_bool != true) return false;
+            if (_int != 1) return false;
+            if (_uint != 1) return false;
+            if (_char != '_') return false;
+            if (_double != 1) return false;
+            if (_decimal != 1) return false;
+            if (_float != 1) return false;
+            if (_byte != (byte)'_') return false;
+            if (_short != (short)1) return false;
+            if (_long != 1) return false;
+            if (_ulong != (ulong)1) return false;
+            if (_string != "_") return false;
+            return true;
+        }
     }
 }

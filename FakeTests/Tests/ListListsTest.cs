@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Tests
 {
-    internal class ListListsTest
+    public class ListListsTest
     {
     }
 }

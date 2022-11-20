@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Data.SqlTypes;
 using System.Reflection;
 
 namespace FakeDbContext
@@ -36,7 +38,7 @@ namespace FakeDbContext
         };
         #endregion
 
-        public T? CreateFake<T>() where T : new()
+        public T CreateFake<T>() where T : new()
             => (T)GenerateFake(new T());
 
         public object? CreateFake(Type T)
@@ -52,60 +54,56 @@ namespace FakeDbContext
             var props = currentType.GetProperties();
             Type propertyType;
             bool nullable;
-            foreach (var prop in props)
+            if (IsGenericList(currentType))
             {
-                propertyType = ExtractNullableType(prop.PropertyType, out nullable);
-                if (IsGenericList(propertyType))
+                CurrentListObject_AddListItem(o, currentType);
+            }
+            else
+            {
+                foreach (var prop in props)
                 {
-                    Type itemType = propertyType.GetGenericArguments()[0];
-
-                    object instance = Activator.CreateInstance(propertyType);
-                    // List<T> implements the non-generic IList interface
-                    IList list = (IList)instance;
-
-                    object item;
-                    if (DefaultValues.ContainsKey(itemType))
-                        item = DefaultValues[itemType];
-                    else
-                        item = CreateFake(itemType);
-                    list.Add(item); //whatever you need to add
-                    prop.SetValue(o, list, null);
-                }
-                else if (DefaultValues.ContainsKey(propertyType))
-                {
-                    if (!TrySetPrimitiveValue(o, prop, propertyType, nullable))
+                    propertyType = ExtractNullableType(prop.PropertyType, out nullable);
+                    if (IsGenericList(propertyType))
                     {
+                        if (!CurrentListProperty_AddListItem(o, prop, propertyType))
+                            return null;
+                    }
+                    else if (DefaultValues.ContainsKey(propertyType))
+                    {
+                        if (!TrySetPrimitiveValue(o, prop, propertyType, nullable))
+                        {
+                            try
+                            {
+                                //primitive is nullable
+                                prop.SetValue(o, null);
+                            }
+                            catch (Exception)
+                            {
+                                //primitive has no set method
+                            }
+                        }
+                    }
+                    else
+                    {
+                        bool pushed = false;
                         try
                         {
-                            //primitive is nullable
-                            prop.SetValue(o, null);
+                            if (stack.Contains(prop.PropertyType))
+                                prop.SetValue(o, Activator.CreateInstance(prop.PropertyType));
+                            else
+                            {
+                                stack.Push(prop.PropertyType);
+                                pushed = true;
+                                TrySetObjectValue(o, prop);
+                            }
                         }
                         catch (Exception)
                         {
-                            //primitive has no set method
+                            //object is nullable
                         }
+                        if (pushed)
+                            stack.Pop();
                     }
-                }
-                else
-                {
-                    bool pushed = false;
-                    try
-                    {
-                        if (stack.Contains(prop.PropertyType))
-                            prop.SetValue(o, Activator.CreateInstance(prop.PropertyType));
-                        else
-                        {
-                            stack.Push(prop.PropertyType);
-                            pushed = true;
-                            TrySetObjectValue(o, prop);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //object is nullable
-                    }
-                    if (pushed)
-                        stack.Pop();
                 }
             }
             return o;
@@ -115,6 +113,48 @@ namespace FakeDbContext
         #endregion
 
         #region Generic Helper Function
+        private void CurrentListObject_AddListItem(IList o, Type currentType)
+        {
+            Type itemType = ExtractNullableType(currentType.GetGenericArguments()[0], out bool nullable);
+
+            object item;
+            if (DefaultValues.ContainsKey(itemType))
+                item = DefaultValues[itemType];
+            else
+            {
+                if (stack.Contains(currentType))
+                    return;
+                stack.Push(currentType);
+                item = CreateFake(itemType);
+                stack.Pop();
+            }
+            ((IList)o).Add(item); //whatever you need to add
+        }
+
+        private bool CurrentListProperty_AddListItem(dynamic o, PropertyInfo prop, Type propertyType)
+        {
+            Type itemType = ExtractNullableType(propertyType.GetGenericArguments()[0], out bool nullable);
+
+            object instance = Activator.CreateInstance(propertyType);
+            // List<T> implements the non-generic IList interface
+            IList list = (IList)instance;
+
+            object item;
+            if (DefaultValues.ContainsKey(itemType))
+                item = DefaultValues[itemType];
+            else
+            {
+                if (stack.Contains(prop.PropertyType))
+                    return false;
+                stack.Push(prop.PropertyType);
+                item = CreateFake(itemType);
+                stack.Pop();
+            }
+            list.Add(item); //whatever you need to add
+            prop.SetValue(o, list, null);
+            return true;
+        }
+
         private void TrySetObjectValue(dynamic o, PropertyInfo prop)
         {
             Type t = prop.PropertyType;

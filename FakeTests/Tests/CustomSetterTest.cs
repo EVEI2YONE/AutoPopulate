@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Tests
 {
-    internal class CustomSetterTest
+    public class CustomSetterTest
     {
     }
 }

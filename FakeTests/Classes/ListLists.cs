@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    internal class ListLists
+    public class ListLists
     {
         public List<List<ListNullables>> List { get; set; }
         public List<List<ListPrimitives>> ListPrimitives { get; set; }

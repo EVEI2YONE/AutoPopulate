@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    internal class AttributeProperty
+    public class AttributeProperty
     {
         public int defaultIntValue { get; set; }
         public char defaultCharValue { get; set; }
