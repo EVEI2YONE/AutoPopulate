@@ -26,10 +26,10 @@ namespace FakeTests
 
             if (list[0] is ITestableObject)
             {
-                return list.Where(x => ((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
+                return !list.Where(x => !((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
             }
             else if (_defaultValues.ContainsKey(typeof(T)))
-                return list.Where(x => _defaultValues[typeof(T)].Equals(list[0])).Any();
+                return !list.Where(x => !_defaultValues[typeof(T)].Equals(list[0])).Any();
             else
                 return true;
         }
