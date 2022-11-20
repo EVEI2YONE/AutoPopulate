@@ -16,4 +16,14 @@ namespace FakeTests
             generator = new AutoPopulate();
         }
     }
+    /*
+     * Todo:
+     *  nullable object
+     *  list object
+     *  list lists
+     *  complex object
+     *  recursive object
+     *  attribute property
+     *  customer setter
+     */
 }

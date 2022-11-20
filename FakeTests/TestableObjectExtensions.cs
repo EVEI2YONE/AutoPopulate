@@ -10,23 +10,7 @@ namespace FakeTests
 {
     public static class TestableObjectExtensions
     {
-        private static Dictionary<Type, object> _defaultValues = new Dictionary<Type, object>()
-        {
-            { typeof(string), "_" },
-            { typeof(bool), true },
-            { typeof(Int16), (Int16)1 },
-            { typeof(int), 1 },
-            { typeof(uint), 1u },
-            { typeof(long), 1l },
-            { typeof(ulong), 1ul },
-            { typeof(decimal), 1m },
-            { typeof(double), 1.0d },
-            { typeof(float), 1.0f },
-            { typeof(char), '_' },
-            { typeof(byte), (byte)('_') },
-            { typeof(DateTime), DateTime.Now },
-            { typeof(List<>), null },
-        };
+        private static Dictionary<Type, object> _defaultValues = AutoPopulate.DefaultValues;
         public static bool EqualsTo<T>(this Nullable<T> nullable, T other) where T : struct
             => nullable.HasValue && nullable.Value.Equals(other);
         public static bool NotEqualTo<T>(this Nullable<T> nullable, T other) where T : struct

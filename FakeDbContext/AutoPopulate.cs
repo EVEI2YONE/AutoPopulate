@@ -13,13 +13,13 @@ namespace FakeDbContext
         public readonly decimal d = 0m;
         public readonly long l = 0;
 
-        public Dictionary<Type, object> DefaultValues 
+        public static Dictionary<Type, object> DefaultValues 
         { 
             get { return _defaultValues; }
             set { _defaultValues = value; } 
         }
 
-        private Dictionary<Type, object> _defaultValues = new Dictionary<Type, object>()
+        private static Dictionary<Type, object> _defaultValues = new Dictionary<Type, object>()
         {
             { typeof(string), "_" },
             { typeof(bool), true },
