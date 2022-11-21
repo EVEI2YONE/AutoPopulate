@@ -19,19 +19,21 @@ namespace FakeTests
             => list != null && list.Any() && (_defaultValues[typeof(T)]).Equals(list[0]);
         public static bool ValidNullablePrimitiveList<T>(this List<Nullable<T>> list) where T : struct
             => list != null && list.Any() && list[0].HasValue && (_defaultValues[typeof(T)]).Equals(list[0].Value);
-        public static bool ValidList<T>(this List<T> list) where T : class
+        public static bool ValidList<T>(this IEnumerable<T> list)
         {
             if (list == null || !list.Any())
                 return false;
 
-            if (list[0] is ITestableObject)
+            //any fails returns true, so use ! to negate
+            return !list.Where(x =>
             {
-                return !list.Where(x => !((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
-            }
-            else if (_defaultValues.ContainsKey(typeof(T)))
-                return !list.Where(x => !_defaultValues[typeof(T)].Equals(list[0])).Any();
-            else
-                return true;
+                //return true if any scenarios fail
+                if (_defaultValues.ContainsKey(typeof(T)))
+                    return list.Where(x => !_defaultValues[typeof(T)].Equals(x)).Any();
+                else if (x is ITestableObject)
+                    return list.Where(x => !((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
+                return false;
+            }).Any();
         }
         public static bool ValidDictionary<K, V>(this Dictionary<K, V> dict) where V : class
         {
