@@ -33,5 +33,10 @@ namespace FakeTests
             else
                 return true;
         }
+        public static bool ValidDictionary<K, V>(this Dictionary<K, V> dict) where V : class
+        {
+            if (dict == null || !dict.Any()) return false;
+            return !dict.Keys.Where(key => dict[key] is ITestableObject).Where(x => !((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
+        }
     }
 }

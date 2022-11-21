@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data.SqlTypes;
+using System.Dynamic;
 using System.Reflection;
 
 namespace FakeDbContext
@@ -34,160 +38,69 @@ namespace FakeDbContext
             { typeof(char), '_' },
             { typeof(byte), (byte)('_') },
             { typeof(DateTime), DateTime.Now },
-            { typeof(List<>), null },
+            //{ typeof(List<object>), null },
+            { typeof(object), "object" }
         };
         #endregion
 
         public T CreateFake<T>() where T : new()
-            => (T)GenerateFake(new T());
+            => (T)GenerateFake(typeof(T));
 
-        public object? CreateFake(Type T)
-            => GenerateFake(Activator.CreateInstance(T));
+        public object CreateFake(Type type)
+            => GenerateFake(type);
 
         Stack<Type> stack = new Stack<Type>();
         #region Main Generation Logic
-        private dynamic? GenerateFake(dynamic o)
+        private dynamic? GenerateFake(dynamic? o)
         {
             if (o == null)
                 return null;
-            Type currentType = ((object)o).GetType();
-            var props = currentType.GetProperties();
-            Type propertyType;
-            bool nullable;
-            if (IsGenericList(currentType))
+            bool isType = (o is Type);
+            Type currentType = (isType) ? (Type)ExtractNullableType(o) : ExtractNullableType(((object)o).GetType());
+            if (HasDefaultValue(currentType))
             {
-                CurrentListObject_AddListItem(o, currentType);
+                o = DefaultValues[currentType];
             }
             else
             {
-                foreach (var prop in props)
+                o = (isType) ? Activator.CreateInstance(currentType) : o;
+                if (IsGenericCollection(currentType))
                 {
-                    propertyType = ExtractNullableType(prop.PropertyType, out nullable);
-                    if (IsGenericList(propertyType))
+                    Type nestedType = currentType.GetGenericArguments()[0];
+                    ((IList)o).Add(GenerateFake(nestedType));
+                }
+                else if (IsGenericDictionary(currentType))
+                {
+                    Type keyType = currentType.GetGenericArguments()[0];
+                    Type valueType = currentType.GetGenericArguments()[1];
+                    ((IDictionary)o).Add(GenerateFake(keyType), GenerateFake(valueType));
+                }
+                else
+                {
+                    foreach (var prop in currentType.GetProperties())
                     {
-                        if (!CurrentListProperty_AddListItem(o, prop, propertyType))
-                            return null;
-                    }
-                    else if (DefaultValues.ContainsKey(propertyType))
-                    {
-                        if (!TrySetPrimitiveValue(o, prop, propertyType, nullable))
-                        {
-                            try
-                            {
-                                //primitive is nullable
-                                prop.SetValue(o, null);
-                            }
-                            catch (Exception)
-                            {
-                                //primitive has no set method
-                            }
-                        }
-                    }
-                    else
-                    {
-                        bool pushed = false;
-                        try
-                        {
-                            if (stack.Contains(prop.PropertyType))
-                                prop.SetValue(o, Activator.CreateInstance(prop.PropertyType));
-                            else
-                            {
-                                stack.Push(prop.PropertyType);
-                                pushed = true;
-                                TrySetObjectValue(o, prop);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            //object is nullable
-                        }
-                        if (pushed)
-                            stack.Pop();
+                        prop.SetValue(o, GenerateFake(prop.PropertyType), null);
                     }
                 }
             }
             return o;
         }
-
-
         #endregion
 
-        #region Generic Helper Function
-        private void CurrentListObject_AddListItem(IList o, Type currentType)
-        {
-            Type itemType = ExtractNullableType(currentType.GetGenericArguments()[0], out bool nullable);
+        #region
+        private bool IsGenericCollection(Type propType)
+            => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>);
 
-            object item;
-            if (DefaultValues.ContainsKey(itemType))
-                item = DefaultValues[itemType];
-            else
-            {
-                if (stack.Contains(currentType))
-                    return;
-                stack.Push(currentType);
-                item = CreateFake(itemType);
-                stack.Pop();
-            }
-            ((IList)o).Add(item); //whatever you need to add
-        }
+        private bool IsGenericDictionary(Type propType)
+            => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 
-        private bool CurrentListProperty_AddListItem(dynamic o, PropertyInfo prop, Type propertyType)
-        {
-            Type itemType = ExtractNullableType(propertyType.GetGenericArguments()[0], out bool nullable);
+        private bool HasDefaultValue(Type propType)
+            => DefaultValues.ContainsKey(propType);
 
-            object instance = Activator.CreateInstance(propertyType);
-            // List<T> implements the non-generic IList interface
-            IList list = (IList)instance;
-
-            object item;
-            if (DefaultValues.ContainsKey(itemType))
-                item = DefaultValues[itemType];
-            else
-            {
-                if (stack.Contains(prop.PropertyType))
-                    return false;
-                stack.Push(prop.PropertyType);
-                item = CreateFake(itemType);
-                stack.Pop();
-            }
-            list.Add(item); //whatever you need to add
-            prop.SetValue(o, list, null);
-            return true;
-        }
-
-        private void TrySetObjectValue(dynamic o, PropertyInfo prop)
-        {
-            Type t = prop.PropertyType;
-            prop.SetValue(o, GenerateFake(Activator.CreateInstance(t)));
-        }
-
-        private bool TrySetPrimitiveValue(dynamic o, PropertyInfo prop, Type type, bool nullable)
-        {
-            try
-            {
-                var val = DefaultValues[type];
-                //if (nullable)
-                //  val = ;
-                prop.SetValue(o, val);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private Type ExtractNullableType(Type propType, out bool nullable)
+        private Type ExtractNullableType(Type propType)
         {
             Type nullableType = Nullable.GetUnderlyingType(propType);
-            nullable = nullableType != null;
-            propType = nullableType ?? propType;
-            return propType;
-        }
-
-        private bool IsGenericList(Type propType)
-        {
-            return propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>);
+            return nullableType ?? propType;
         }
         #endregion
     }
