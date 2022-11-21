@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FakeDbContext\FakeDbContext.csproj" />
+    <ProjectReference Include="..\FakeDbContext\AutoPopulate.csproj" />
   </ItemGroup>
 
 </Project>
