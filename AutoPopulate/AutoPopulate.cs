@@ -1,29 +1,20 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Data.SqlTypes;
 using System.Dynamic;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 
 namespace FakeDbContext
 {
     public class AutoPopulate
     {
-        #region constants
-        public readonly string _ = string.Empty;
-        public readonly DateTime now = DateTime.Now;
-        public readonly decimal d = 0m;
-        public readonly long l = 0;
-
-        public static Dictionary<Type, object> DefaultValues 
-        { 
-            get { return _defaultValues; }
-            set { _defaultValues = value; } 
-        }
-
-        private static Dictionary<Type, object> _defaultValues = new Dictionary<Type, object>()
+        #region Variables
+        public static Dictionary<Type, object> DefaultValues { get; set; } = new Dictionary<Type, object>()
         {
             { typeof(string), "_" },
             { typeof(bool), true },
@@ -49,12 +40,12 @@ namespace FakeDbContext
         public object CreateFake(Type type)
             => GenerateFake(type);
 
-        Stack<Type> stack = new Stack<Type>();
         #region Main Generation Logic
-        private dynamic? GenerateFake(dynamic? o)
+        public virtual dynamic? GenerateFake(dynamic? o)
         {
             if (o == null)
                 return null;
+
             bool isType = (o is Type);
             Type currentType = (isType) ? (Type)ExtractNullableType(o) : ExtractNullableType(((object)o).GetType());
             if (HasDefaultValue(currentType))
@@ -87,17 +78,17 @@ namespace FakeDbContext
         }
         #endregion
 
-        #region
-        private bool IsGenericCollection(Type propType)
+        #region Generic Helper Methods
+        public virtual bool IsGenericCollection(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>);
 
-        private bool IsGenericDictionary(Type propType)
+        public virtual bool IsGenericDictionary(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 
-        private bool HasDefaultValue(Type propType)
+        public virtual bool HasDefaultValue(Type propType)
             => DefaultValues.ContainsKey(propType);
 
-        private Type ExtractNullableType(Type propType)
+        public virtual Type ExtractNullableType(Type propType)
         {
             Type nullableType = Nullable.GetUnderlyingType(propType);
             return nullableType ?? propType;
