@@ -32,6 +32,7 @@ namespace FakeDbContext
             //{ typeof(List<object>), null },
             { typeof(object), "object" }
         };
+        public static Stack<Type> Stack = new Stack<Type>();
         #endregion
 
         public T CreateFake<T>() where T : new()
@@ -52,6 +53,16 @@ namespace FakeDbContext
             {
                 o = DefaultValues[currentType];
             }
+            else if (IsRecursiveType(currentType))
+            {
+                o = Activator.CreateInstance(currentType);
+                foreach (var prop in currentType.GetProperties())
+                {
+                    if (IsRecursiveType(prop.PropertyType))
+                        continue;
+                    prop.SetValue(o, GenerateFake(prop.PropertyType), null);
+                }
+            }
             else
             {
                 o = (isType) ? Activator.CreateInstance(currentType) : o;
@@ -68,10 +79,12 @@ namespace FakeDbContext
                 }
                 else
                 {
+                    Stack.Push(currentType);
                     foreach (var prop in currentType.GetProperties())
                     {
                         prop.SetValue(o, GenerateFake(prop.PropertyType), null);
                     }
+                    Stack.Pop();
                 }
             }
             return o;
@@ -79,16 +92,19 @@ namespace FakeDbContext
         #endregion
 
         #region Generic Helper Methods
-        public virtual bool IsGenericCollection(Type propType)
+        private bool IsGenericCollection(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>);
 
-        public virtual bool IsGenericDictionary(Type propType)
+        private bool IsGenericDictionary(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Dictionary<,>);
 
-        public virtual bool HasDefaultValue(Type propType)
+        private bool IsRecursiveType(Type propType)
+            => Stack.Contains(propType);
+
+        private bool HasDefaultValue(Type propType)
             => DefaultValues.ContainsKey(propType);
 
-        public virtual Type ExtractNullableType(Type propType)
+        private Type ExtractNullableType(Type propType)
         {
             Type nullableType = Nullable.GetUnderlyingType(propType);
             return nullableType ?? propType;
