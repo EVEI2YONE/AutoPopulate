@@ -15,7 +15,7 @@
         public List<ulong> _ulong { get; set; }
         public List<string> _string { get; set; }
 
-        public bool ItemsSuccessfullyPopulated()
+        public bool ItemsSuccessfullyPopulated(int? depth = 1)
         {
             if(!_bool.ValidPrimitiveList()) return false;
             if(!_int.ValidPrimitiveList()) return false;

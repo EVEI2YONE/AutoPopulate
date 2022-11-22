@@ -1,9 +1,17 @@
 ﻿namespace FakeTests.Classes
 {
-    public class ListObjects
+    public class ListObjects : ITestableObject
     {
-        public List<object> a { get; set; }
-        public List<NullablePrimitive> b { get; set; }
-        public List<ListLists> c { get; set; }
+        public List<object> _list_objects { get; set; }
+        public List<NullablePrimitive> _list_nullablePrimitives { get; set; }
+        public List<ListLists> _list_listlists { get; set; }
+
+        public bool ItemsSuccessfullyPopulated(int? depth = 1)
+        {
+            if(!_list_objects.ValidList()) return false;
+            if(!_list_nullablePrimitives.ValidList()) return false;
+            if(!_list_listlists.ValidList()) return false;
+            return true;
+        }
     }
 }

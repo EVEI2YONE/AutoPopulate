@@ -2,6 +2,6 @@
 {
     public interface ITestableObject
     {
-        public bool ItemsSuccessfullyPopulated();
+        public bool ItemsSuccessfullyPopulated(int? depth = 1);
     }
 }

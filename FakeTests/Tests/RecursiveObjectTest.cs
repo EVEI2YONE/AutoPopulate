@@ -9,5 +9,13 @@
 
             Assert.IsTrue(response.ItemsSuccessfullyPopulated());
         }
+
+        [Test]
+        public void RecursiveObject_Test2()
+        {
+            var response = generator.CreateFake<RecursiveObject>();
+
+            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+        }
     }
 }

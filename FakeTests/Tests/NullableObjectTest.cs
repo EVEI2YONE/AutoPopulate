@@ -9,5 +9,13 @@
 
             Assert.IsTrue(response.ItemsSuccessfullyPopulated());
         }
+
+        [Test]
+        public void NullableObject_Test2()
+        {
+            var response = generator.CreateFake<NullableObject>();
+
+            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+        }
     }
 }

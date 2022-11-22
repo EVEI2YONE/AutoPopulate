@@ -17,7 +17,7 @@
         public List<ListPrimitives> _listPrimitives { get; set; }
         public List<List<int?>> _listlistint { get; set; }
 
-        public bool ItemsSuccessfullyPopulated()
+        public bool ItemsSuccessfullyPopulated(int? depth = 1)
         {
             if (!_bool.ValidNullablePrimitiveList()) return false;
             if (!_int.ValidNullablePrimitiveList()) return false;

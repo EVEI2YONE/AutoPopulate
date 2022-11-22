@@ -15,7 +15,7 @@
         public ulong? _ulong { get; set; }
         public string _string { get; set; }
 
-        public bool ItemsSuccessfullyPopulated()
+        public bool ItemsSuccessfullyPopulated(int? depth = 1)
         {
             if(_bool.NotEqualTo(true)) return false;
             if (_int.NotEqualTo(1)) return false;

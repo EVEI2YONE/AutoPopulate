@@ -6,7 +6,7 @@
         public List<object> _list { get; set; }
         public List<Dictionary<string,object>> _listdictionary { get; set; }
 
-        public bool ItemsSuccessfullyPopulated()
+        public bool ItemsSuccessfullyPopulated(int? depth = 1)
         {
             if (!_dictionary.ValidDictionary()) return false;
             if (!_list.ValidList()) return false;
