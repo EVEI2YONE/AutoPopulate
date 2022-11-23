@@ -17,5 +17,15 @@
 
             Assert.IsTrue(response.ItemsSuccessfullyPopulated());
         }
+
+        [Test]
+        public void RecursiveObject_Test3()
+        {
+            AutoPopulate.RecursiveLimit = 2;
+            var response = generator.CreateFake<RecursiveObject>();
+
+            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            AutoPopulate.RecursiveLimit = 1;
+        }
     }
 }

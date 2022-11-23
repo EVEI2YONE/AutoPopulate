@@ -29,10 +29,11 @@ namespace FakeDbContext
             { typeof(char), '_' },
             { typeof(byte), (byte)('_') },
             { typeof(DateTime), DateTime.Now },
-            //{ typeof(List<object>), null },
             { typeof(object), "object" }
         };
-        public static Stack<Type> Stack = new Stack<Type>();
+        public static int RecursiveLimit = 1;
+        private static Dictionary<Type, int> RecursiveOccurrences { get; set; } = new Dictionary<Type, int>();
+        private static Stack<Type> Stack = new Stack<Type>();
         #endregion
 
         public T CreateFake<T>() where T : new()
@@ -56,16 +57,19 @@ namespace FakeDbContext
             else if (IsRecursiveType(currentType))
             {
                 o = Activator.CreateInstance(currentType);
+                IncrementType(currentType);
                 foreach (var prop in currentType.GetProperties())
                 {
-                    if (IsRecursiveType(prop.PropertyType))
+                    if (IsRecursiveType(prop.PropertyType) && RecursiveLimitReached(prop.PropertyType))
                         continue;
                     prop.SetValue(o, GenerateFake(prop.PropertyType), null);
                 }
+                DecrementType(currentType);
             }
             else
             {
                 o = (isType) ? Activator.CreateInstance(currentType) : o;
+                IncrementType(currentType); //preps to monitor recursion depth
                 if (IsGenericCollection(currentType))
                 {
                     Type nestedType = currentType.GetGenericArguments()[0];
@@ -79,13 +83,14 @@ namespace FakeDbContext
                 }
                 else
                 {
-                    Stack.Push(currentType);
+                    Stack.Push(currentType); //preps for recursion
                     foreach (var prop in currentType.GetProperties())
                     {
                         prop.SetValue(o, GenerateFake(prop.PropertyType), null);
                     }
                     Stack.Pop();
                 }
+                DecrementType(currentType);
             }
             return o;
         }
@@ -109,6 +114,18 @@ namespace FakeDbContext
             Type nullableType = Nullable.GetUnderlyingType(propType);
             return nullableType ?? propType;
         }
+
+        private void IncrementType(Type propType)
+        {
+            if(!RecursiveOccurrences.TryAdd(propType, 1))
+                RecursiveOccurrences[propType] = RecursiveOccurrences.GetValueOrDefault(propType) + 1;
+        }
+
+        private bool RecursiveLimitReached(Type propType)
+            => RecursiveOccurrences[propType] > RecursiveLimit;
+
+        private void DecrementType(Type propType)
+            => RecursiveOccurrences[propType] = RecursiveOccurrences[propType] - 1;
         #endregion
     }
 }
