@@ -35,7 +35,16 @@ namespace FakeDbContext
         private static Dictionary<Type, int> RecursiveOccurrences { get; set; } = new Dictionary<Type, int>();
         private static Stack<Type> Stack = new Stack<Type>();
         #endregion
-
+        #region Enums
+        private static Random random = new Random();
+        public static int CollectionLimit = 1;
+        public static int CollectionStart = 1;
+        public static RandomizationType RandomizationBehavior = RandomizationType.Fixed;
+        public enum RandomizationType {
+            Fixed,
+            Range
+        }
+        #endregion
         public T CreateFake<T>() where T : new()
             => (T)GenerateFake(typeof(T));
 
@@ -68,18 +77,22 @@ namespace FakeDbContext
             }
             else
             {
+                int start = 1;
+                int end = GetRandomGenerationLimit();
                 o = (isType) ? Activator.CreateInstance(currentType) : o;
                 IncrementType(currentType); //preps to monitor recursion depth
                 if (IsGenericCollection(currentType))
                 {
                     Type nestedType = currentType.GetGenericArguments()[0];
-                    ((IList)o).Add(GenerateFake(nestedType));
+                    for(int i = start; i <= end; i++)
+                        ((IList)o).Add(GenerateFake(nestedType));
                 }
                 else if (IsGenericDictionary(currentType))
                 {
                     Type keyType = currentType.GetGenericArguments()[0];
                     Type valueType = currentType.GetGenericArguments()[1];
-                    ((IDictionary)o).Add(GenerateFake(keyType), GenerateFake(valueType));
+                    for(int i = start; i <= end; i++)
+                        ((IDictionary)o).Add(GenerateFake(keyType), GenerateFake(valueType));
                 }
                 else
                 {
@@ -126,6 +139,15 @@ namespace FakeDbContext
 
         private void DecrementType(Type propType)
             => RecursiveOccurrences[propType] = RecursiveOccurrences[propType] - 1;
+
+        private int GetRandomGenerationLimit()
+            => RandomizationBehavior == RandomizationType.Range ? random.Next(CollectionStart, CollectionLimit) : CollectionLimit;
+
+        public static void SetRandomizationRange(int start, int end)
+        {
+            CollectionStart = start;
+            CollectionLimit = end;
+        }
         #endregion
     }
 }
