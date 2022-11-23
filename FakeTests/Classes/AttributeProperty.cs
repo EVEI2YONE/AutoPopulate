@@ -1,4 +1,6 @@
-﻿namespace FakeTests.Classes
+﻿using System.Runtime.CompilerServices;
+
+namespace FakeTests.Classes
 {
     public class AttributeProperty : ITestableObject
     {
