@@ -9,5 +9,13 @@
 
             Assert.IsTrue(response.ItemsSuccessfullyPopulated());
         }
+
+        [Test]
+        public void ComplexObject_Test2()
+        {
+            var response = generator.CreateFake<ComplexObject>();
+
+            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+        }
     }
 }
