@@ -1,5 +1,4 @@
-﻿using FakeDbContext;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +17,6 @@ namespace FakeTests
     }
     /*
      * Todo:
-     *  nullable object
-     *  list object
-     *  list lists
-     *  complex object
-     *  recursive object
      *  attribute property
      *  customer setter
      */

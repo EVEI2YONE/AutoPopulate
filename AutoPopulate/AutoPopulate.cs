@@ -9,7 +9,7 @@ using System.Dynamic;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 
-namespace FakeDbContext
+namespace AutoPopulate_Generator
 {
     public class AutoPopulate
     {

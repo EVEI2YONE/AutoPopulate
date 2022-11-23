@@ -6,6 +6,7 @@ global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
 
-global using FakeDbContext;
+global using AutoPopulate_Generator;
+global using AutoPopulate_Attribute;
 global using FakeTests.Classes;
 global using FakeTests;
