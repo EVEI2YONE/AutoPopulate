@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 
 namespace FakeTests.Tests
@@ -9,11 +10,17 @@ namespace FakeTests.Tests
         public void AttributePropertyExists_Test()
         {
             Type attributeProperty = typeof(AttributeProperty);
+            Type customAttribute = typeof(AutoPopulateAttribute);
 
             var classProps = attributeProperty.GetProperties();
-            var memberProps = classProps.Where(x => x.GetCustomAttributes(true).Any());
-            var attributeExists = memberProps.Where(x => x.DeclaringType == typeof(AttributeProperty)).Any();
-            Assert.IsTrue(attributeExists);
+            bool exists = false;
+            foreach(var prop in classProps)
+            {
+                var customattributes =  prop.GetCustomAttributes(customAttribute, true).ToList();
+                if(customattributes.Any())
+                    exists = true;
+            }
+            Assert.IsTrue(exists);
         }
 
         [Test]

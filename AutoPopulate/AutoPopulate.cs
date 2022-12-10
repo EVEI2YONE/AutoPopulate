@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoPopulate_Attribute;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -60,7 +61,7 @@ namespace AutoPopulate_Generator
             bool isType = (o is Type);
             Type currentType = (isType) ? (Type)ExtractNullableType(o) : ExtractNullableType(((object)o).GetType());
             if (HasDefaultValue(currentType))
-            {
+            {              
                 o = DefaultValues[currentType];
             }
             else if (IsRecursiveType(currentType))
@@ -99,7 +100,10 @@ namespace AutoPopulate_Generator
                     Stack.Push(currentType); //preps for recursion
                     foreach (var prop in currentType.GetProperties())
                     {
-                        prop.SetValue(o, GenerateFake(prop.PropertyType), null);
+                        if (!HasCustomValue(prop, out object value))
+                            prop.SetValue(o, GenerateFake(prop.PropertyType), null);
+                        else
+                            prop.SetValue(o, value, null);
                     }
                     Stack.Pop();
                 }
@@ -147,6 +151,16 @@ namespace AutoPopulate_Generator
         {
             CollectionStart = start;
             CollectionLimit = end;
+        }
+
+        public bool HasCustomValue(PropertyInfo propInfo, out dynamic value)
+        {
+            var attribute = propInfo.GetCustomAttribute<AutoPopulateAttribute>();
+            if (attribute != null)
+                value = attribute.Value;
+            else
+                value = null;
+            return attribute != null;
         }
         #endregion
     }

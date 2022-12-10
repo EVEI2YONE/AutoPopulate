@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Tests
 {
-    public class CustomSetterTest
+    public class PredicatePropertyTest
     {
     }
 }

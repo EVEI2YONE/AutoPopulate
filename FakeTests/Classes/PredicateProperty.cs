@@ -1,6 +1,6 @@
 ﻿namespace FakeTests.Classes
 {
-    public class CustomSetter
+    public class PredicateProperty
     {
         private string private_custom_setter;
         public string custom_setter
