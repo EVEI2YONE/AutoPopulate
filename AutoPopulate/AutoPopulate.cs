@@ -61,8 +61,11 @@ namespace AutoPopulate_Generator
             bool isType = (o is Type);
             Type currentType = (isType) ? (Type)ExtractNullableType(o) : ExtractNullableType(((object)o).GetType());
             if (HasDefaultValue(currentType))
-            {              
-                o = DefaultValues[currentType];
+            {
+                if (HasDelegate(currentType))
+                    o = ((Delegate)DefaultValues[currentType]).DynamicInvoke();
+                else
+                    o = DefaultValues[currentType];
             }
             else if (IsRecursiveType(currentType))
             {
@@ -166,6 +169,14 @@ namespace AutoPopulate_Generator
             else
                 value = null;
             return attribute != null;
+        }
+
+        public bool HasDelegate(Type propType)
+        {
+            var value = DefaultValues[propType];
+            if (value is Delegate)
+                return true;
+            return false;
         }
         #endregion
     }
