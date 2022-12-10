@@ -15,9 +15,4 @@ namespace FakeTests
             generator = new AutoPopulate();
         }
     }
-    /*
-     * Todo:
-     *  attribute property
-     *  customer setter
-     */
 }

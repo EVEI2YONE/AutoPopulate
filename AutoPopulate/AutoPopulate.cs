@@ -157,7 +157,12 @@ namespace AutoPopulate_Generator
         {
             var attribute = propInfo.GetCustomAttribute<AutoPopulateAttribute>();
             if (attribute != null)
-                value = attribute.Value;
+            {
+                if (attribute.Value != null && attribute.Value.GetType().IsArray)
+                    value = ((object[])attribute.Value)[random.Next(0, ((object[])attribute.Value).Length)];
+                else
+                    value = attribute.Value;
+            }
             else
                 value = null;
             return attribute != null;
