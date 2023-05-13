@@ -15,22 +15,22 @@ namespace AutoPopulate_Generator
     public class AutoPopulate
     {
         #region Variables
-        public static Dictionary<Type, object> DefaultValues { get; set; } = new Dictionary<Type, object>()
+        public static Dictionary<Type, Delegate> DefaultValues { get; set; } = new Dictionary<Type, Delegate>()
         {
-            { typeof(string), "_" },
-            { typeof(bool), true },
-            { typeof(Int16), (Int16)1 },
-            { typeof(int), 1 },
-            { typeof(uint), 1u },
-            { typeof(long), 1l },
-            { typeof(ulong), 1ul },
-            { typeof(decimal), 1m },
-            { typeof(double), 1.0d },
-            { typeof(float), 1.0f },
-            { typeof(char), '_' },
-            { typeof(byte), (byte)('_') },
-            { typeof(DateTime), DateTime.Now },
-            { typeof(object), "object" }
+            { typeof(string), () => "_" },
+            { typeof(bool), () => true },
+            { typeof(Int16), () => (Int16)1 },
+            { typeof(int), () => 1 },
+            { typeof(uint), () => 1u },
+            { typeof(long), () => 1l },
+            { typeof(ulong), () => 1ul },
+            { typeof(decimal), () => 1m },
+            { typeof(double), () => 1.0d },
+            { typeof(float), () => 1.0f },
+            { typeof(char), () => '_' },
+            { typeof(byte), () => (byte)('_') },
+            { typeof(DateTime), () => DateTime.Now },
+            { typeof(object), () => "object" }
         };
         public static int RecursiveLimit = 1;
         private static Dictionary<Type, int> RecursiveOccurrences { get; set; } = new Dictionary<Type, int>();
@@ -38,10 +38,11 @@ namespace AutoPopulate_Generator
         #endregion
         #region Enums
         private static Random random = new Random();
-        public static int CollectionLimit = 1;
-        public static int CollectionStart = 1;
+        public static int CollectionLimit = 0;
+        public static int CollectionStart = 0;
         public static RandomizationType RandomizationBehavior = RandomizationType.Fixed;
-        public enum RandomizationType {
+        public enum RandomizationType
+        {
             Fixed,
             Range
         }
@@ -63,9 +64,9 @@ namespace AutoPopulate_Generator
             if (HasDefaultValue(currentType))
             {
                 if (HasDelegate(currentType))
-                    o = ((Delegate)DefaultValues[currentType]).DynamicInvoke();
+                    o = ((Delegate)DefaultValues[currentType].DynamicInvoke()).DynamicInvoke();
                 else
-                    o = DefaultValues[currentType];
+                    o = DefaultValues[currentType].DynamicInvoke();
             }
             else if (IsRecursiveType(currentType))
             {
@@ -81,21 +82,25 @@ namespace AutoPopulate_Generator
             }
             else
             {
-                int start = 1;
+                int start = 0;
                 int end = GetRandomGenerationLimit();
-                o = (isType) ? Activator.CreateInstance(currentType) : o;
+                o = (isType) ? currentType.IsInterface ? Activator.CreateInstance(ResolveInterface(currentType)) : Activator.CreateInstance(currentType) : o;
                 IncrementType(currentType); //preps to monitor recursion depth
-                if (IsGenericCollection(currentType))
+                if (IsGenericList(currentType))
                 {
                     Type nestedType = currentType.GetGenericArguments()[0];
-                    for(int i = start; i <= end; i++)
+                    for (int i = start; i < end; i++)
                         ((IList)o).Add(GenerateFake(nestedType));
+                }
+                else if (IsGenericCollection(currentType))
+                {
+                    //((ICollection)o)
                 }
                 else if (IsGenericDictionary(currentType))
                 {
                     Type keyType = currentType.GetGenericArguments()[0];
                     Type valueType = currentType.GetGenericArguments()[1];
-                    for(int i = start; i <= end; i++)
+                    for (int i = start; i <= end; i++)
                         ((IDictionary)o).Add(GenerateFake(keyType), GenerateFake(valueType));
                 }
                 else
@@ -117,8 +122,23 @@ namespace AutoPopulate_Generator
         #endregion
 
         #region Generic Helper Methods
+        private Type ResolveInterface(Type type)
+        {
+            var genericArguments = type.GetGenericArguments();
+            if (type != typeof(string) && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                return typeof(List<>).MakeGenericType(genericArguments[0]);
+            else if (type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                return typeof(Dictionary<,>).MakeGenericType(genericArguments[0], genericArguments[1]);
+            else if (type.GetGenericTypeDefinition() == typeof(ICollection<>))
+                return typeof(HashSet<>).MakeGenericType(genericArguments[0]);
+            return null;
+        }
+
         private bool IsGenericCollection(Type propType)
-            => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>);
+            => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(ICollection<>);
+
+        private bool IsGenericList(Type propType)
+            => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(IList<>);
 
         private bool IsGenericDictionary(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Dictionary<,>);
@@ -137,7 +157,7 @@ namespace AutoPopulate_Generator
 
         private void IncrementType(Type propType)
         {
-            if(!RecursiveOccurrences.TryAdd(propType, 1))
+            if (!RecursiveOccurrences.TryAdd(propType, 1))
                 RecursiveOccurrences[propType] = RecursiveOccurrences.GetValueOrDefault(propType) + 1;
         }
 
@@ -173,7 +193,7 @@ namespace AutoPopulate_Generator
 
         public bool HasDelegate(Type propType)
         {
-            var value = DefaultValues[propType];
+            var value = DefaultValues[propType].DynamicInvoke();
             if (value is Delegate)
                 return true;
             return false;
