@@ -12,6 +12,7 @@ namespace FakeTests
         protected AutoPopulate generator;
         [OneTimeSetUp] public void OneTimeSetUp()
         {
+            AutoPopulate.CollectionLimit = 1;
             generator = new AutoPopulate();
         }
     }

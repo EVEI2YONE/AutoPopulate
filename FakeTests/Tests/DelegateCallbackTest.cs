@@ -12,11 +12,14 @@ namespace FakeTests.Tests
         public void DelegateTest()
         {
             var callback = new DelegateCallback().Test;
+            var orig = AutoPopulate.DefaultValues[typeof(string)];
             AutoPopulate.DefaultValues[typeof(string)] = callback;
 
             var response = generator.CreateFake<DelegateCallback>();
 
             Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+
+            AutoPopulate.DefaultValues[typeof(string)] = orig;
         }
     }
 }

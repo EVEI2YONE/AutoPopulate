@@ -100,7 +100,7 @@ namespace AutoPopulate_Generator
                 {
                     Type keyType = currentType.GetGenericArguments()[0];
                     Type valueType = currentType.GetGenericArguments()[1];
-                    for (int i = start; i <= end; i++)
+                    for (int i = start; i < end; i++)
                         ((IDictionary)o).Add(GenerateFake(keyType), GenerateFake(valueType));
                 }
                 else
@@ -108,6 +108,9 @@ namespace AutoPopulate_Generator
                     Stack.Push(currentType); //preps for recursion
                     foreach (var prop in currentType.GetProperties())
                     {
+                        if (prop.SetMethod == null)
+                            continue;
+
                         if (!HasCustomValue(prop, out object value))
                             prop.SetValue(o, GenerateFake(prop.PropertyType), null);
                         else
@@ -137,8 +140,9 @@ namespace AutoPopulate_Generator
         private bool IsGenericCollection(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(ICollection<>);
 
+        private static List<Type> genericLists = new List<Type>() { typeof(IList<>), typeof(List<>) };
         private bool IsGenericList(Type propType)
-            => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(IList<>);
+            => propType.IsGenericType && genericLists.Contains(propType.GetGenericTypeDefinition());
 
         private bool IsGenericDictionary(Type propType)
             => propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(Dictionary<,>);
