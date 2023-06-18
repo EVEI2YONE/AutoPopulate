@@ -13,7 +13,12 @@ namespace AutoPopulate_Attribute
     [AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = true)]
     public class AutoPopulateAttribute : AutoPopulateBaseAttribute
     {
-        public virtual object Value { get; set; }
+        private object[] _values { get; set; }
+        public object[] Values { get { return _values; } }
+        public AutoPopulateAttribute(params object[] values) 
+        {
+            this._values = values;
+        }
     }
 
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]

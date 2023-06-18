@@ -8,7 +8,7 @@ namespace FakeTests.Classes
         private string private_custom_setter2;
         private string private_noncustom_setter;
 
-        [AutoPopulate(Value = new object[] { "Test", "Test2" })]
+        [AutoPopulate("Test", "Test2")]
         public string customSetter_attrib2
         {
             get
@@ -22,7 +22,7 @@ namespace FakeTests.Classes
             }
         }
         
-        [AutoPopulate(Value = "Test")]
+        [AutoPopulate("Test")]
         public string customSetter_attrib
         {
             get

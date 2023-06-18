@@ -180,18 +180,15 @@ namespace AutoPopulate_Generator
             CollectionLimit = end;
         }
 
-        public bool HasCustomValue(PropertyInfo propInfo, out dynamic value)
+        public bool HasCustomValue(PropertyInfo propInfo, out dynamic? value)
         {
             var attribute = propInfo.GetCustomAttribute<AutoPopulateAttribute>();
+            value = null;
             if (attribute != null)
             {
-                if (attribute.Value != null && attribute.Value.GetType().IsArray)
-                    value = ((object[])attribute.Value)[random.Next(0, ((object[])attribute.Value).Length)];
-                else
-                    value = attribute.Value;
+                if (attribute.Values != null && attribute.Values.Any())
+                    value = attribute.Values[random.Next(0, attribute.Values.Length)];
             }
-            else
-                value = null;
             return attribute != null;
         }
 
