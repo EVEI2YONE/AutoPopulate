@@ -1,5 +1,4 @@
-﻿using AutoPopulate_Attribute;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,9 +9,9 @@ using System.Dynamic;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 
-namespace AutoPopulate_Generator
+namespace AutoPopulate
 {
-    public class AutoPopulate
+    public class EntityGenerator
     {
         #region Variables
         public Dictionary<Type, Delegate> DefaultValues { get; set; } = new Dictionary<Type, Delegate>()

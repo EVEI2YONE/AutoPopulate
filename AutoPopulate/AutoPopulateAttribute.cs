@@ -5,7 +5,7 @@ using System.Runtime.InteropServices.ObjectiveC;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoPopulate_Attribute
+namespace AutoPopulate
 {
     [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = true)]
     public class AutoPopulateBaseAttribute : Attribute { }

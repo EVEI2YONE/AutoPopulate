@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoPopulate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,11 +10,11 @@ namespace FakeTests
     [TestFixture]
     public class TestBase
     {
-        protected AutoPopulate generator;
+        protected EntityGenerator generator;
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            generator = new AutoPopulate();
+            generator = new EntityGenerator();
             generator.CollectionLimit = 1;
         }
     }
