@@ -11,9 +11,10 @@
     <RepositoryUrl>https://github.com/SmoothBrainDevelopers/AutoPopulate.git</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>EntityGenerator;Generator;Fake;Mock;Populate;Auto;Test</PackageTags>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
     <PackageLicenseFile>MIT License.txt</PackageLicenseFile>
 	<PackageOutputPath>bin\Packages</PackageOutputPath>
+	<FileVersion>1.0.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
