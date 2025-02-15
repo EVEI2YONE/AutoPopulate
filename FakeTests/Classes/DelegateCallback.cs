@@ -8,7 +8,7 @@ namespace FakeTests.Classes
 {
     public class DelegateCallback : ITestableObject
     {
-        public string value { get; set; }
+        public string? value { get; set; }
         public string Test()
         {
             return "Callback value";

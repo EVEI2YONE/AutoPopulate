@@ -13,7 +13,7 @@
         public short _short { get; set; }
         public long _long { get; set; }
         public ulong _ulong { get; set; }
-        public string _string { get; set; }
+        public string? _string { get; set; }
 
         public bool ItemsSuccessfullyPopulated(int? depth = 1)
         {

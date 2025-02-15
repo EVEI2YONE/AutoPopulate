@@ -2,8 +2,8 @@
 {
     public class PredicateProperty
     {
-        private string private_custom_setter;
-        public string custom_setter
+        private string? private_custom_setter;
+        public string? custom_setter
         {
             get
             {

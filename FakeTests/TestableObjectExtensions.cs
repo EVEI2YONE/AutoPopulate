@@ -16,9 +16,9 @@ namespace FakeTests
         public static bool NotEqualTo<T>(this Nullable<T> nullable, T other) where T : struct
             => !nullable.HasValue || !nullable.Value.Equals(other);
         public static bool ValidPrimitiveList<T>(this List<T> list) where T : struct
-            => list != null && list.Any() && (_defaultValues[typeof(T)].DynamicInvoke()).Equals(list[0]);
+            => list != null && list.Any() && (_defaultValues[typeof(T)].DynamicInvoke()!).Equals(list[0]);
         public static bool ValidNullablePrimitiveList<T>(this List<Nullable<T>> list) where T : struct
-            => list != null && list.Any() && list[0].HasValue && (_defaultValues[typeof(T)].DynamicInvoke()).Equals(list[0].Value);
+            => list?.FirstOrDefault() != null && list.Any() && list[0].HasValue && (_defaultValues[typeof(T)].DynamicInvoke()!).Equals(list[0]!.Value);
         public static bool ValidList<T>(this IEnumerable<T> list)
         {
             if (list == null || !list.Any())
@@ -28,17 +28,17 @@ namespace FakeTests
             return !list.Where(x =>
             {
                 //return true if any scenarios fail
-                if (_defaultValues.ContainsKey(typeof(T)))
-                    return list.Where(x => !_defaultValues[typeof(T)].DynamicInvoke().Equals(x)).Any();
+                if (_defaultValues?.ContainsKey(typeof(T)) ?? false)
+                    return list.Where(x => !_defaultValues[typeof(T)].DynamicInvoke()!.Equals(x)).Any();
                 else if (x is ITestableObject)
-                    return list.Where(x => !((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
+                    return list.Where(x => !((ITestableObject)x!).ItemsSuccessfullyPopulated()).Any();
                 return false;
             }).Any();
         }
-        public static bool ValidDictionary<K, V>(this Dictionary<K, V> dict) where V : class
+        public static bool ValidDictionary<K, V>(this Dictionary<K, V> dict) where K : notnull where V : class
         {
             if (dict == null || !dict.Any()) return false;
-            return !dict.Keys.Where(key => dict[key] is ITestableObject).Where(x => !((ITestableObject)x).ItemsSuccessfullyPopulated()).Any();
+            return !dict.Keys.Where(key => dict[key] is ITestableObject).Where(x => !((ITestableObject)x!).ItemsSuccessfullyPopulated()).Any();
         }
     }
 }

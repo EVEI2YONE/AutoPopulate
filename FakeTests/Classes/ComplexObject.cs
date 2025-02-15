@@ -2,7 +2,7 @@
 {
     public class ComplexObject : ITestableObject
     {
-        public ComplexObject obj { get; set; }
+        public ComplexObject? obj { get; set; }
         public Dictionary<string, object>? _keyValuePairs { get; set; }
         public int? nullable_int { get; set; }
         public int primitive_int { get; set; }
@@ -25,7 +25,7 @@
 
         public bool ItemsSuccessfullyPopulated(int? depth = 1)
         {
-            if(depth <= 1 && !obj.ItemsSuccessfullyPopulated(++depth)) return false;
+            if(depth <= 1 && (!obj?.ItemsSuccessfullyPopulated(++depth) ?? false)) return false;
             if(!_keyValuePairs?.ValidDictionary() ?? false) return false;
             if (nullable_int != 1) return false;
             if(primitive_int != 1) return false;

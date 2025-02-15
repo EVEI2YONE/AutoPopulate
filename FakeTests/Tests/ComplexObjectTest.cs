@@ -5,9 +5,9 @@
         [Test]
         public void ComplexObject_Test1()
         {
-            var response = (ComplexObject)generator.CreateFake(typeof(ComplexObject));
+            var response = (ComplexObject?)generator.CreateFake(typeof(ComplexObject));
 
-            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+            Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]

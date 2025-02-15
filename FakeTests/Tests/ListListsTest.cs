@@ -12,9 +12,9 @@
         [Test]
         public void ListList_Test1()
         {
-            var response = (ListLists) generator.CreateFake(typeof(ListLists));
+            var response = (ListLists?) generator.CreateFake(typeof(ListLists));
 
-            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+            Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
