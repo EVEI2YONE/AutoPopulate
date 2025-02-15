@@ -6,8 +6,8 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Data.SqlTypes;
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 
 namespace AutoPopulate
 {
@@ -47,20 +47,29 @@ namespace AutoPopulate
             Range
         }
         #endregion
-        public T CreateFake<T>() where T : new()
-            => (T)GenerateFake(typeof(T))!;
+        public T CreateFake<T>() where T : class, new()
+            => GenerateFake(typeof(T))! as T;
 
         public object? CreateFake(Type type)
             => GenerateFake(type);
 
         #region Main Generation Logic
-        public virtual dynamic? GenerateFake(dynamic? o)
+        public virtual object GenerateFake(object o)
         {
             if (o == null)
                 return null;
 
-            bool isType = (o is Type);
-            Type currentType = (isType) ? (Type)ExtractNullableType(o) : ExtractNullableType(((object)o).GetType());
+            bool isType = false;
+            Type currentType;
+            if(o is Type oType)
+            {
+                isType = true;
+                currentType = ExtractNullableType(oType);
+            }
+            else
+            {
+                currentType = ExtractNullableType((o).GetType());
+            }
             if (HasDefaultValue(currentType))
             {
                 if (HasDelegate(currentType))
@@ -161,8 +170,8 @@ namespace AutoPopulate
 
         private void IncrementType(Type propType)
         {
-            if (!RecursiveOccurrences.TryAdd(propType, 1))
-                RecursiveOccurrences[propType] = RecursiveOccurrences.GetValueOrDefault(propType) + 1;
+            if (!TryAdd(RecursiveOccurrences, propType, 1))
+                RecursiveOccurrences[propType] = RecursiveOccurrences[propType] + 1;
         }
 
         private bool RecursiveLimitReached(Type propType)
@@ -200,5 +209,21 @@ namespace AutoPopulate
             return false;
         }
         #endregion
+
+        private bool TryAdd<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        {
+            if (dictionary == null)
+            {
+                return false;
+            }
+
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary.Add(key, value);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
