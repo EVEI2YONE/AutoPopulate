@@ -7,7 +7,7 @@
         {
             var response = (RecursiveObject) generator.CreateFake(typeof(RecursiveObject));
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
@@ -15,17 +15,17 @@
         {
             var response = generator.CreateFake<RecursiveObject>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
         public void RecursiveObject_Test3()
         {
-            AutoPopulate.RecursiveLimit = 2;
+            generator.RecursiveLimit = 2;
             var response = generator.CreateFake<RecursiveObject>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
-            AutoPopulate.RecursiveLimit = 1;
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+            generator.RecursiveLimit = 1;
         }
     }
 }

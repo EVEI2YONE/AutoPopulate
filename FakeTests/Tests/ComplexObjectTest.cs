@@ -7,7 +7,7 @@
         {
             var response = (ComplexObject)generator.CreateFake(typeof(ComplexObject));
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
@@ -15,7 +15,7 @@
         {
             var response = generator.CreateFake<ComplexObject>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
     }
 }

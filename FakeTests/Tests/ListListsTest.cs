@@ -5,8 +5,8 @@
         [TearDown]
         public void CleanUp()
         {
-            AutoPopulate.SetRandomizationRange(1, 1);
-            AutoPopulate.RandomizationBehavior = AutoPopulate.RandomizationType.Fixed;
+            generator.SetRandomizationRange(1, 1);
+            generator.RandomizationBehavior = AutoPopulate.RandomizationType.Fixed;
         }
 
         [Test]
@@ -14,7 +14,7 @@
         {
             var response = (ListLists) generator.CreateFake(typeof(ListLists));
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
@@ -22,27 +22,27 @@
         {
             var response = generator.CreateFake<ListLists>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
         public void ListList_Test3()
         {
-            AutoPopulate.CollectionLimit = 2;
-            AutoPopulate.RandomizationBehavior = AutoPopulate.RandomizationType.Fixed;
+            generator.CollectionLimit = 2;
+            generator.RandomizationBehavior = AutoPopulate.RandomizationType.Fixed;
             var response = generator.CreateFake<ListLists>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
         
         [Test]
         public void ListList_Test4()
         {
-            AutoPopulate.SetRandomizationRange(1, 4);
-            AutoPopulate.RandomizationBehavior = AutoPopulate.RandomizationType.Range;
+            generator.SetRandomizationRange(1, 4);
+            generator.RandomizationBehavior = AutoPopulate.RandomizationType.Range;
             var response = generator.CreateFake<ListLists>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
     }
 }

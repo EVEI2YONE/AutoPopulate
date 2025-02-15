@@ -10,10 +10,11 @@ namespace FakeTests
     public class TestBase
     {
         protected AutoPopulate generator;
-        [OneTimeSetUp] public void OneTimeSetUp()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            AutoPopulate.CollectionLimit = 1;
             generator = new AutoPopulate();
+            generator.CollectionLimit = 1;
         }
     }
 }

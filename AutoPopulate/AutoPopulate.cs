@@ -15,32 +15,33 @@ namespace AutoPopulate_Generator
     public class AutoPopulate
     {
         #region Variables
-        public static Dictionary<Type, Delegate> DefaultValues { get; set; } = new Dictionary<Type, Delegate>()
+        public Dictionary<Type, Delegate> DefaultValues { get; set; } = new Dictionary<Type, Delegate>()
         {
             { typeof(string), () => "_" },
             { typeof(bool), () => true },
-            { typeof(Int16), () => (Int16)1 },
+            { typeof(short), () => (short)1 },
             { typeof(int), () => 1 },
             { typeof(uint), () => 1u },
-            { typeof(long), () => 1l },
+            { typeof(long), () => 1L },
             { typeof(ulong), () => 1ul },
             { typeof(decimal), () => 1m },
             { typeof(double), () => 1.0d },
             { typeof(float), () => 1.0f },
             { typeof(char), () => '_' },
             { typeof(byte), () => (byte)('_') },
+            { typeof(sbyte), () => (sbyte)1 },
             { typeof(DateTime), () => DateTime.Now },
             { typeof(object), () => "object" }
         };
-        public static int RecursiveLimit = 1;
-        private static Dictionary<Type, int> RecursiveOccurrences { get; set; } = new Dictionary<Type, int>();
-        private static Stack<Type> Stack = new Stack<Type>();
+        public int RecursiveLimit { get; set; } = 1;
+        private Dictionary<Type, int> RecursiveOccurrences { get; set; } = new Dictionary<Type, int>();
+        private Stack<Type> Stack = new Stack<Type>();
         #endregion
         #region Enums
-        private static Random random = new Random();
-        public static int CollectionLimit = 0;
-        public static int CollectionStart = 0;
-        public static RandomizationType RandomizationBehavior = RandomizationType.Fixed;
+        private Random random = new Random();
+        public int CollectionLimit { get; set; } = 0;
+        public int CollectionStart { get; set; } = 0;
+        public RandomizationType RandomizationBehavior { get; set; } = RandomizationType.Fixed;
         public enum RandomizationType
         {
             Fixed,
@@ -48,9 +49,9 @@ namespace AutoPopulate_Generator
         }
         #endregion
         public T CreateFake<T>() where T : new()
-            => (T)GenerateFake(typeof(T));
+            => (T)GenerateFake(typeof(T))!;
 
-        public object CreateFake(Type type)
+        public object? CreateFake(Type type)
             => GenerateFake(type);
 
         #region Main Generation Logic
@@ -64,7 +65,7 @@ namespace AutoPopulate_Generator
             if (HasDefaultValue(currentType))
             {
                 if (HasDelegate(currentType))
-                    o = ((Delegate)DefaultValues[currentType].DynamicInvoke()).DynamicInvoke();
+                    o = ((Delegate)DefaultValues[currentType].DynamicInvoke()!).DynamicInvoke();
                 else
                     o = DefaultValues[currentType].DynamicInvoke();
             }
@@ -90,7 +91,7 @@ namespace AutoPopulate_Generator
                 {
                     Type nestedType = currentType.GetGenericArguments()[0];
                     for (int i = start; i < end; i++)
-                        ((IList)o).Add(GenerateFake(nestedType));
+                        ((IList)o).Add(GenerateFake(nestedType)!);
                 }
                 else if (IsGenericCollection(currentType))
                 {
@@ -101,7 +102,7 @@ namespace AutoPopulate_Generator
                     Type keyType = currentType.GetGenericArguments()[0];
                     Type valueType = currentType.GetGenericArguments()[1];
                     for (int i = start; i < end; i++)
-                        ((IDictionary)o).Add(GenerateFake(keyType), GenerateFake(valueType));
+                        ((IDictionary)o).Add(GenerateFake(keyType)!, GenerateFake(valueType)!);
                 }
                 else
                 {
@@ -111,7 +112,7 @@ namespace AutoPopulate_Generator
                         if (prop.SetMethod == null)
                             continue;
 
-                        if (!HasCustomValue(prop, out object value))
+                        if (!HasCustomValue(prop, out object? value))
                             prop.SetValue(o, GenerateFake(prop.PropertyType), null);
                         else
                             prop.SetValue(o, value, null);
@@ -125,7 +126,7 @@ namespace AutoPopulate_Generator
         #endregion
 
         #region Generic Helper Methods
-        private Type ResolveInterface(Type type)
+        private Type? ResolveInterface(Type type)
         {
             var genericArguments = type.GetGenericArguments();
             if (type != typeof(string) && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
@@ -155,7 +156,7 @@ namespace AutoPopulate_Generator
 
         private Type ExtractNullableType(Type propType)
         {
-            Type nullableType = Nullable.GetUnderlyingType(propType);
+            Type? nullableType = Nullable.GetUnderlyingType(propType);
             return nullableType ?? propType;
         }
 
@@ -174,7 +175,7 @@ namespace AutoPopulate_Generator
         private int GetRandomGenerationLimit()
             => RandomizationBehavior == RandomizationType.Range ? random.Next(CollectionStart, CollectionLimit) : CollectionLimit;
 
-        public static void SetRandomizationRange(int start, int end)
+        public void SetRandomizationRange(int start, int end)
         {
             CollectionStart = start;
             CollectionLimit = end;

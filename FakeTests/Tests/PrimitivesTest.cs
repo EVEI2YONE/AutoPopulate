@@ -7,7 +7,7 @@
         {
             var response = (Primitives)generator.CreateFake(typeof(Primitives));
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
         
         [Test]
@@ -15,7 +15,7 @@
         {
             var response = generator.CreateFake<Primitives>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
     }
 }

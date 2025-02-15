@@ -10,7 +10,7 @@ namespace FakeTests
 {
     public static class TestableObjectExtensions
     {
-        private static Dictionary<Type, Delegate> _defaultValues = AutoPopulate.DefaultValues;
+        private static Dictionary<Type, Delegate> _defaultValues = new AutoPopulate().DefaultValues;
         public static bool EqualsTo<T>(this Nullable<T> nullable, T other) where T : struct
             => nullable.HasValue && nullable.Value.Equals(other);
         public static bool NotEqualTo<T>(this Nullable<T> nullable, T other) where T : struct

@@ -7,7 +7,7 @@
         {
             var response = (ListNullables)generator.CreateFake(typeof(ListNullables));
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
 
         [Test]
@@ -15,7 +15,7 @@
         {
             var response = generator.CreateFake<ListNullables>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
     }
 }

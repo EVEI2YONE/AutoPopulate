@@ -4,12 +4,12 @@ namespace FakeTests.Classes
 {
     public class AttributeProperty : ITestableObject
     {
-        private string private_custom_setter;
-        private string private_custom_setter2;
-        private string private_noncustom_setter;
+        private string? private_custom_setter = null;
+        private string? private_custom_setter2 = null;
+        private string? private_noncustom_setter = null;
 
         [AutoPopulate("Test", "Test2")]
-        public string customSetter_attrib2
+        public string? customSetter_attrib2
         {
             get
             {
@@ -23,7 +23,7 @@ namespace FakeTests.Classes
         }
         
         [AutoPopulate("Test")]
-        public string customSetter_attrib
+        public string? customSetter_attrib
         {
             get
             {
@@ -36,7 +36,7 @@ namespace FakeTests.Classes
             }
         }
 
-        public string customSetter_noAttrib
+        public string? customSetter_noAttrib
         {
             get
             {

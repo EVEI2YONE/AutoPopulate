@@ -20,7 +20,7 @@ namespace FakeTests.Tests
                 if(customattributes.Any())
                     exists = true;
             }
-            Assert.IsTrue(exists);
+            Assert.That(exists, Is.True);
         }
 
         [Test]
@@ -28,7 +28,7 @@ namespace FakeTests.Tests
         {
             var response = generator.CreateFake<AttributeProperty>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
     }
 }

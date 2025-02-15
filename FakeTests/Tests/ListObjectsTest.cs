@@ -7,7 +7,7 @@ namespace FakeTests.Tests
         {
             var response = (ListObjects)generator.CreateFake(typeof(ListObjects));
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
         
         [Test]
@@ -15,7 +15,7 @@ namespace FakeTests.Tests
         {
             var response = generator.CreateFake<ListObjects>();
 
-            Assert.IsTrue(response.ItemsSuccessfullyPopulated());
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
     }
 }
