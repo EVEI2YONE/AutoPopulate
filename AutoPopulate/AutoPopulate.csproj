@@ -3,6 +3,31 @@
   <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
 	  <LangVersion>10.0</LangVersion>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Title>AutoPopulate</Title>
+	  <Description>An easy way to create an mock object dynamically. Flexible for developer needs to speed up test development.</Description>
+	  <PackageProjectUrl>https://github.com/SmoothBrainDevelopers/AutoPopulate.git</PackageProjectUrl>
+	  <RepositoryUrl>https://github.com/SmoothBrainDevelopers/AutoPopulate.git</RepositoryUrl>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+	  <PackageTags>EntityGenerator;Generator;Fake;Mock;Populate;Auto;Test</PackageTags>
+	  <PackageLicenseFile>MIT License.txt</PackageLicenseFile>
+	  <PackageOutputPath>bin\Packages</PackageOutputPath>
+	  <AssemblyVersion>1.0.0.2</AssemblyVersion>
+	  <FileVersion>1.0.1.0</FileVersion>
+	  <VersionPrefix>1.2.0</VersionPrefix>
   </PropertyGroup>
+
+  <ItemGroup>
+	  <None Include="..\MIT License.txt">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+	  </None>
+  </ItemGroup>
 
 </Project>
