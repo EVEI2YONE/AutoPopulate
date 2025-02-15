@@ -13,6 +13,7 @@
     <PackageTags>EntityGenerator;Generator;Fake;Mock;Populate;Auto;Test</PackageTags>
     <AssemblyVersion>1.0.0.1</AssemblyVersion>
     <PackageLicenseFile>MIT License.txt</PackageLicenseFile>
+	<PackageOutputPath>bin\Packages</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
