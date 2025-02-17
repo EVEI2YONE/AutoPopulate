@@ -14,6 +14,5 @@ namespace AutoPopulate
         public RandomizationType RandomizationBehavior { get; set; }
         public T CreateFake<T>() where T : class, new();
         public object? CreateFake(Type type);
-        public void SetListRandomRange(int start, int end);
     }
 }
