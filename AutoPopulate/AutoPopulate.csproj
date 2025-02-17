@@ -14,9 +14,7 @@
 	  <PackageTags>EntityGenerator;Generator;Fake;Mock;Populate;Auto;Test</PackageTags>
 	  <PackageLicenseFile>MIT License.txt</PackageLicenseFile>
 	  <PackageOutputPath>bin\Packages</PackageOutputPath>
-	  <AssemblyVersion>1.0.0.2</AssemblyVersion>
-	  <FileVersion>1.0.1.0</FileVersion>
-	  <VersionPrefix>1.2.0</VersionPrefix>
+	  <VersionPrefix>1.3.0</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

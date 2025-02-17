@@ -5,7 +5,7 @@
         [TearDown]
         public void CleanUp()
         {
-            generator.SetRandomizationRange(1, 1);
+            generator.SetListRandomRange(1, 1);
             generator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
         }
 
@@ -38,7 +38,7 @@
         [Test]
         public void ListList_Test4()
         {
-            generator.SetRandomizationRange(1, 4);
+            generator.SetListRandomRange(1, 4);
             generator.RandomizationBehavior = EntityGenerator.RandomizationType.Range;
             var response = generator.CreateFake<ListLists>();
 

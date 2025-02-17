@@ -10,7 +10,7 @@ namespace FakeTests
 {
     public static class TestableObjectExtensions
     {
-        private static Dictionary<Type, Delegate> _defaultValues = new EntityGenerator().DefaultValues;
+        private static Dictionary<Type, Func<object>> _defaultValues = new EntityGenerator().DefaultValues;
         public static bool EqualsTo<T>(this Nullable<T> nullable, T other) where T : struct
             => nullable.HasValue && nullable.Value.Equals(other);
         public static bool NotEqualTo<T>(this Nullable<T> nullable, T other) where T : struct

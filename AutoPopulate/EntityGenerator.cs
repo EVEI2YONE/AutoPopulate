@@ -11,10 +11,10 @@ using System.Reflection;
 
 namespace AutoPopulate
 {
-    public class EntityGenerator
+    public class EntityGenerator : IEntityGenerator
     {
         #region Variables
-        public Dictionary<Type, Delegate> DefaultValues { get; set; } = new Dictionary<Type, Delegate>()
+        public Dictionary<Type, Func<object>> DefaultValues { get; private set; } = new Dictionary<Type, Func<object>>()
         {
             { typeof(string), () => "_" },
             { typeof(bool), () => true },
@@ -54,7 +54,7 @@ namespace AutoPopulate
             => GenerateFake(type);
 
         #region Main Generation Logic
-        public virtual object GenerateFake(object o)
+        private object GenerateFake(object o)
         {
             if (o == null)
                 return null;
@@ -183,13 +183,13 @@ namespace AutoPopulate
         private int GetRandomGenerationLimit()
             => RandomizationBehavior == RandomizationType.Range ? random.Next(CollectionStart, CollectionLimit) : CollectionLimit;
 
-        public void SetRandomizationRange(int start, int end)
+        public void SetListRandomRange(int start, int end)
         {
             CollectionStart = start;
             CollectionLimit = end;
         }
 
-        public bool HasCustomValue(PropertyInfo propInfo, out dynamic? value)
+        private bool HasCustomValue(PropertyInfo propInfo, out dynamic? value)
         {
             var attribute = propInfo.GetCustomAttribute<AutoPopulateAttribute>();
             value = null;
@@ -201,7 +201,7 @@ namespace AutoPopulate
             return attribute != null;
         }
 
-        public bool HasDelegate(Type propType)
+        private bool HasDelegate(Type propType)
         {
             var value = DefaultValues[propType].DynamicInvoke();
             if (value is Delegate)
