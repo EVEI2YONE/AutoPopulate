@@ -5,7 +5,7 @@
         [Test]
         public void NullableObject_Test1()
         {
-            var response = (NullableObject)generator.CreateFake(typeof(NullableObject));
+            var response = (NullableObject)EntityGenerator.CreateFake(typeof(NullableObject));
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -13,7 +13,7 @@
         [Test]
         public void NullableObject_Test2()
         {
-            var response = generator.CreateFake<NullableObject>();
+            var response = EntityGenerator.CreateFake<NullableObject>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
