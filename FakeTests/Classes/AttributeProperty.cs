@@ -1,4 +1,5 @@
 ﻿using AutoPopulate;
+using AutoPopulate.Core;
 using System.Runtime.CompilerServices;
 
 namespace FakeTests.Classes
