@@ -12,14 +12,14 @@ namespace FakeTests.Tests
         public void DelegateTest()
         {
             var callback = new DelegateCallback().Test;
-            var orig = generator.DefaultValues[typeof(string)];
-            generator.DefaultValues[typeof(string)] = callback;
+            var orig = EntityGenerator.DefaultValues[typeof(string)];
+            EntityGenerator.DefaultValues[typeof(string)] = callback;
 
-            var response = generator.CreateFake<DelegateCallback>();
+            var response = EntityGenerator.CreateFake<DelegateCallback>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
 
-            generator.DefaultValues[typeof(string)] = orig;
+            EntityGenerator.DefaultValues[typeof(string)] = orig;
         }
     }
 }

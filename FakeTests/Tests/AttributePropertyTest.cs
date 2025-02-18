@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using AutoPopulate.Core;
+using System.Reflection;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;
 
@@ -6,6 +7,23 @@ namespace FakeTests.Tests
 {
     public class AttributePropertyTest : TestBase
     {
+        private class SampleAttributeObject
+        {
+            [AutoPopulate("TestValue")]
+            public string Name { get; set; }
+        }
+
+        [Test]
+        public void Should_Populate_Using_AutoPopulateAttribute()
+        {
+            SampleAttributeObject result = EntityGenerator.CreateFake<SampleAttributeObject>();
+            Assert.That(result, Is.Not.Null);
+            if (Config.UseAutoPopulateAttributes)
+            {
+                Assert.That(result.Name, Is.EqualTo("TestValue"));
+            }
+        }
+
         [Test]
         public void AttributePropertyExists_Test()
         {
@@ -26,7 +44,7 @@ namespace FakeTests.Tests
         [Test]
         public void AttributeProperty_Test1()
         {
-            var response = generator.CreateFake<AttributeProperty>();
+            var response = EntityGenerator.CreateFake<AttributeProperty>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
