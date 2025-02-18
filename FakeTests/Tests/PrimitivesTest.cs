@@ -8,14 +8,14 @@
         public void Should_Generate_Integer()
         {
             int result = EntityGenerator.CreateFake<int>();
-            Assert.Equals(0, result);
+            Assert.That(result, Is.EqualTo(0));
         }
 
         [Test]
         public void Should_Generate_Boolean()
         {
             bool result = EntityGenerator.CreateFake<bool>();
-            Assert.Equals(false, result);
+            Assert.That(result, Is.EqualTo(false));
         }
 
         [Test]
