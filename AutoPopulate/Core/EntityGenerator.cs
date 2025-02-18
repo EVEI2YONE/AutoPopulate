@@ -13,7 +13,7 @@ using System.Reflection;
 namespace AutoPopulate.Core
 {
     /// <summary>
-    /// Main class responsible for entity generation.
+    /// Main class responsible for entity generation with configurable options.
     /// </summary>
     public class EntityGenerator : IEntityGenerator
     {
@@ -21,17 +21,20 @@ namespace AutoPopulate.Core
         private readonly IObjectFactory _objectFactory;
         private readonly ICollectionGenerator _collectionGenerator;
         private readonly IDefaultValueProvider _defaultValueProvider;
+        private readonly IEntityGenerationConfig _config;
 
         public EntityGenerator(
             ITypeMetadataCache typeMetadataCache,
             IObjectFactory objectFactory,
             ICollectionGenerator collectionGenerator,
-            IDefaultValueProvider defaultValueProvider)
+            IDefaultValueProvider defaultValueProvider,
+            IEntityGenerationConfig config)
         {
             _typeMetadataCache = typeMetadataCache;
             _objectFactory = objectFactory;
             _collectionGenerator = collectionGenerator;
             _defaultValueProvider = defaultValueProvider;
+            _config = config;
         }
 
         public T CreateFake<T>() where T : class, new()

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoPopulate
+namespace AutoPopulate.Core
 {
     [AttributeUsage(AttributeTargets.All, Inherited = true, AllowMultiple = true)]
     public class AutoPopulateBaseAttribute : Attribute { }
@@ -16,7 +16,7 @@ namespace AutoPopulate
         public object[] Values { get { return _values; } }
         public AutoPopulateAttribute(params object[] values) 
         {
-            this._values = values;
+            _values = values;
         }
     }
 
