@@ -1,4 +1,6 @@
-﻿namespace FakeTests.Tests
+﻿using AutoPopulate.Core;
+
+namespace FakeTests.Tests
 {
     public class ListListsTest : TestBase
     {
