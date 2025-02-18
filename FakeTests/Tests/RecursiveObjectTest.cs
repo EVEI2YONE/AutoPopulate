@@ -38,7 +38,7 @@ namespace FakeTests.Tests
         [Test]
         public void RecursiveObject_Test1()
         {
-            var response = (RecursiveObject)EntityGenerator.CreateFake(typeof(RecursiveObject));
+            var response = (RecursiveObject)EntityGeneratorOrig.CreateFake(typeof(RecursiveObject));
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -46,7 +46,7 @@ namespace FakeTests.Tests
         [Test]
         public void RecursiveObject_Test2()
         {
-            var response = EntityGenerator.CreateFake<RecursiveObject>();
+            var response = EntityGeneratorOrig.CreateFake<RecursiveObject>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -55,7 +55,7 @@ namespace FakeTests.Tests
         public void RecursiveObject_Test3()
         {
             (Config as EntityGenerationConfig).MaxRecursionDepth = 2;
-            var response = EntityGenerator.CreateFake<RecursiveObject>();
+            var response = EntityGeneratorOrig.CreateFake<RecursiveObject>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
             (Config as EntityGenerationConfig).MaxRecursionDepth = 1;

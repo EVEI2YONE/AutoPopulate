@@ -1,4 +1,5 @@
 ﻿using AutoPopulate.Core;
+using AutoPopulate.Implementations;
 
 namespace FakeTests.Tests
 {
@@ -34,47 +35,49 @@ namespace FakeTests.Tests
             }
         }
 
-        //[TearDown]
-        //public void CleanUp()
-        //{
-        //    EntityGenerator.SetListRandomRange(1, 1);
-        //    EntityGenerator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
-        //}
+        [TearDown]
+        public void CleanUp()
+        {
+            (ConfigOrig as EntityGenerationConfig).MinListSize = 1;
+            (ConfigOrig as EntityGenerationConfig).MaxListSize = 1;
+            (ConfigOrig as EntityGenerationConfig).RandomizeListSize = false;
+        }
 
-        //[Test]
-        //public void ListList_Test1()
-        //{
-        //    var response = (ListLists?)EntityGenerator.CreateFake(typeof(ListLists));
+        [Test]
+        public void ListList_Test1()
+        {
+            var response = (ListLists?)EntityGenerator.CreateFake(typeof(ListLists));
 
-        //    Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
-        //}
+            Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
+        }
 
-        //[Test]
-        //public void ListList_Test2()
-        //{
-        //    var response = EntityGenerator.CreateFake<ListLists>();
+        [Test]
+        public void ListList_Test2()
+        {
+            var response = EntityGenerator.CreateFake<ListLists>();
 
-        //    Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-        //}
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+        }
 
-        //[Test]
-        //public void ListList_Test3()
-        //{
-        //    EntityGenerator.CollectionLimit = 2;
-        //    EntityGenerator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
-        //    var response = EntityGenerator.CreateFake<ListLists>();
+        [Test]
+        public void ListList_Test3()
+        {
+            (ConfigOrig as EntityGenerationConfig).MaxListSize = 2;
+            (ConfigOrig as EntityGenerationConfig).RandomizeListSize = false;
+            var response = EntityGenerator.CreateFake<ListLists>();
 
-        //    Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-        //}
-        
-        //[Test]
-        //public void ListList_Test4()
-        //{
-        //    EntityGenerator.SetListRandomRange(1, 4);
-        //    EntityGenerator.RandomizationBehavior = EntityGenerator.RandomizationType.Range;
-        //    var response = EntityGenerator.CreateFake<ListLists>();
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+        }
 
-        //    Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-        //}
+        [Test]
+        public void ListList_Test4()
+        {
+            (ConfigOrig as EntityGenerationConfig).MinListSize = 1;
+            (ConfigOrig as EntityGenerationConfig).MaxListSize = 4;
+            (ConfigOrig as EntityGenerationConfig).RandomizeListSize = true;
+            var response = EntityGenerator.CreateFake<ListLists>();
+
+            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+        }
     }
 }

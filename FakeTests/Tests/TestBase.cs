@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FakeTests
+namespace FakeTests.Tests
 {
     /// <summary>
     /// Base class for setting up shared test instances.
@@ -18,6 +18,9 @@ namespace FakeTests
         protected IEntityGenerator EntityGenerator;
         protected IEntityGenerationConfig Config;
 
+        protected IEntityGenerator EntityGeneratorOrig;
+        protected IEntityGenerationConfig ConfigOrig;
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -26,6 +29,12 @@ namespace FakeTests
 
         [SetUp]
         public void Setup()
+        {
+            SetupNew();
+            SetupOrig();
+        }
+
+        private void SetupNew()
         {
             Config = new EntityGenerationConfig
             {
@@ -40,10 +49,29 @@ namespace FakeTests
 
             var typeMetadataCache = new TypeMetadataCache();
             var objectFactory = new ObjectFactory(Config);
-            var collectionGenerator = new CollectionGenerator(Config);
             var defaultValueProvider = new AutoPopulate.Implementations.DefaultValueProvider(Config);
 
-            EntityGenerator = new EntityGenerator(typeMetadataCache, objectFactory, collectionGenerator, defaultValueProvider, Config);
+            EntityGenerator = new EntityGenerator(typeMetadataCache, objectFactory, defaultValueProvider, Config);
+        }
+
+        private void SetupOrig()
+        {
+            ConfigOrig = new EntityGenerationConfig
+            {
+                MinListSize = 1,
+                MaxListSize = 1,
+                RandomizeListSize = false,
+                AllowNullObjects = false,
+                AllowNullPrimitives = false,
+                MaxRecursionDepth = 3,
+                ReferenceBehavior = RecursionReferenceBehavior.NewInstance
+            };
+
+            var typeMetadataCache = new TypeMetadataCache();
+            var objectFactory = new ObjectFactory(ConfigOrig);
+            var defaultValueProvider = new AutoPopulate.Implementations.DefaultValueProvider(ConfigOrig);
+
+            EntityGeneratorOrig = new EntityGenerator(typeMetadataCache, objectFactory, defaultValueProvider, ConfigOrig);
         }
     }
 }

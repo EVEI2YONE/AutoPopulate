@@ -45,7 +45,7 @@ namespace FakeTests.Tests
         [Test]
         public void AttributeProperty_Test1()
         {
-            var response = EntityGenerator.CreateFake<AttributeProperty>();
+            var response = EntityGeneratorOrig.CreateFake<AttributeProperty>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }

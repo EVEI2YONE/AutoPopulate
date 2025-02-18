@@ -13,7 +13,7 @@
         [Test]
         public void NullablePrimitives_Test_1()
         {
-            var response = (NullablePrimitive) EntityGenerator.CreateFake(typeof(NullablePrimitive));
+            var response = (NullablePrimitive)EntityGeneratorOrig.CreateFake(typeof(NullablePrimitive));
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -21,7 +21,7 @@
         [Test]
         public void NullablePrimitives_Test_2()
         {
-            var response = EntityGenerator.CreateFake<NullablePrimitive>();
+            var response = EntityGeneratorOrig.CreateFake<NullablePrimitive>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }

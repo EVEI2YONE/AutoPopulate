@@ -1,4 +1,4 @@
-﻿namespace FakeTests
+﻿namespace FakeTests.Helpers
 {
     public interface ITestableObject
     {

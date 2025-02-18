@@ -1,6 +1,7 @@
 ﻿using AutoPopulate.Core;
 using AutoPopulate.Implementations;
 using AutoPopulate.Interfaces;
+using FakeTests.Helpers;
 using System;
 using System.Collections;
 using System.Collections.Generic;

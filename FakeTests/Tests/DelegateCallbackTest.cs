@@ -16,7 +16,7 @@ namespace FakeTests.Tests
             var orig = TestableObjectExtensions.DefaultValues[typeof(string)];
             TestableObjectExtensions.DefaultValues[typeof(string)] = callback;
 
-            var response = EntityGenerator.CreateFake<DelegateCallback>();
+            var response = EntityGeneratorOrig.CreateFake<DelegateCallback>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
 

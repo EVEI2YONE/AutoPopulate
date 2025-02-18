@@ -10,6 +10,5 @@ namespace AutoPopulate.Interfaces
     public interface IObjectFactory
     {
         object CreateInstance(Type type);
-        T CreateInstance<T>() where T : class, new();
     }
 }

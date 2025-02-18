@@ -1,12 +1,14 @@
 ﻿using AutoPopulate.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace AutoPopulate.Implementations
 {
     /// <summary>
-    /// Handles object instantiation and default value assignment.
+    /// Handles object instantiation, including collection initialization.
     /// </summary>
     public class ObjectFactory : IObjectFactory
     {
@@ -22,12 +24,30 @@ namespace AutoPopulate.Implementations
             if (_config.AllowNullObjects && type.IsClass)
                 return null;
 
-            return Activator.CreateInstance(type) ?? throw new InvalidOperationException($"Cannot create an instance of {type.FullName}");
-        }
+            if (type.IsGenericType)
+            {
+                Type genericTypeDef = type.GetGenericTypeDefinition();
+                Type[] genericArgs = type.GetGenericArguments();
 
-        public T CreateInstance<T>() where T : class, new()
-        {
-            return _config.AllowNullObjects ? null : new T();
+                // Handle Dictionary<TKey, TValue>
+                if (genericTypeDef == typeof(Dictionary<,>) && genericArgs.Length == 2)
+                {
+                    return Activator.CreateInstance(typeof(Dictionary<,>).MakeGenericType(genericArgs));
+                }
+
+                // Handle List<T> or other generic collections
+                if (typeof(ICollection<>).IsAssignableFrom(genericTypeDef) && genericArgs.Length == 1)
+                {
+                    return Activator.CreateInstance(type);
+                }
+            }
+
+            if (typeof(ICollection).IsAssignableFrom(type))
+            {
+                return Activator.CreateInstance(type)!;
+            }
+
+            return Activator.CreateInstance(type) ?? throw new InvalidOperationException($"Cannot create an instance of {type.FullName}");
         }
     }
 }

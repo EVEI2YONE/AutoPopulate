@@ -1,4 +1,6 @@
-﻿namespace FakeTests.Classes
+﻿using FakeTests.Helpers;
+
+namespace FakeTests.Classes
 {
     public class ListLists : ITestableObject
     {

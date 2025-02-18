@@ -1,5 +1,6 @@
 ﻿using AutoPopulate.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,16 +13,26 @@ namespace AutoPopulate.Implementations
     {
         private readonly IEntityGenerationConfig _config;
 
-        private readonly Dictionary<Type, object> _defaultValues = new()
+        private readonly Dictionary<Type, Func<object>> _defaultValues = new()
         {
-            { typeof(string), "" },
-            { typeof(int), 0 },
-            { typeof(bool), false },
-            { typeof(double), 0.0 },
-            { typeof(float), 0.0f },
-            { typeof(long), 0L },
-            { typeof(DateTime), DateTime.MinValue }
+            { typeof(string), () => "_" },
+            { typeof(bool), () => true },
+            { typeof(short), () => (short)1 },
+            { typeof(int), () => 1 },
+            { typeof(uint), () => 1u },
+            { typeof(long), () => 1L },
+            { typeof(ulong), () => 1ul },
+            { typeof(decimal), () => 1m },
+            { typeof(double), () => 1.0d },
+            { typeof(float), () => 1.0f },
+            { typeof(char), () => '_' },
+            { typeof(byte), () => (byte)('_') },
+            { typeof(sbyte), () => (sbyte)1 },
+            { typeof(DateTime), () => DateTime.Now },
+            { typeof(object), () => "object" },
         };
+
+
 
         public DefaultValueProvider(IEntityGenerationConfig config)
         {
@@ -30,7 +41,9 @@ namespace AutoPopulate.Implementations
 
         public bool HasDefaultValue(Type type)
         {
-            return _config.CustomPrimitiveGenerators.ContainsKey(type) || _defaultValues.ContainsKey(type);
+            return _config.CustomPrimitiveGenerators.ContainsKey(type) ||
+                   _defaultValues.ContainsKey(type) ||
+                   (Nullable.GetUnderlyingType(type) is Type underlyingType && _defaultValues.ContainsKey(underlyingType));
         }
 
         public object GetDefaultValue(Type type)
@@ -38,7 +51,13 @@ namespace AutoPopulate.Implementations
             if (_config.CustomPrimitiveGenerators.TryGetValue(type, out var generator))
                 return generator();
 
-            return _defaultValues.TryGetValue(type, out var value) ? value : Activator.CreateInstance(type)!;
+            Func<object> value;
+            if (Nullable.GetUnderlyingType(type) is Type underlyingType)
+            {
+                return _defaultValues.TryGetValue(underlyingType, out value) ? value() : Activator.CreateInstance(underlyingType)!;
+            }
+
+            return _defaultValues.TryGetValue(type, out value) ? value() : Activator.CreateInstance(type)!;
         }
     }
 }

@@ -31,7 +31,7 @@
         [Test]
         public void ListNullables_Test1()
         {
-            var response = (ListNullables)EntityGenerator.CreateFake(typeof(ListNullables));
+            var response = (ListNullables)EntityGeneratorOrig.CreateFake(typeof(ListNullables));
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -39,7 +39,7 @@
         [Test]
         public void ListNullables_Test2()
         {
-            var response = EntityGenerator.CreateFake<ListNullables>();
+            var response = EntityGeneratorOrig.CreateFake<ListNullables>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }

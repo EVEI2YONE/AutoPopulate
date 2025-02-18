@@ -20,7 +20,7 @@
         [Test]
         public void ComplexObject_Test1()
         {
-            var response = (ComplexObject?)EntityGenerator.CreateFake(typeof(ComplexObject));
+            var response = (ComplexObject?)EntityGeneratorOrig.CreateFake(typeof(ComplexObject));
 
             Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -28,7 +28,7 @@
         [Test]
         public void ComplexObject_Test2()
         {
-            var response = EntityGenerator.CreateFake<ComplexObject>();
+            var response = EntityGeneratorOrig.CreateFake<ComplexObject>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }

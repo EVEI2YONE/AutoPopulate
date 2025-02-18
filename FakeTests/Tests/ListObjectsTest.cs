@@ -12,7 +12,7 @@ namespace FakeTests.Tests
         [Test]
         public void Should_Generate_List_Of_Objects()
         {
-            List<SampleObject> result = EntityGenerator.CreateFake<List<SampleObject>>();
+            List<SampleObject> result = EntityGeneratorOrig.CreateFake<List<SampleObject>>();
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.Not.Empty);
             Assert.That(result.Count, Is.GreaterThanOrEqualTo(Config.MinListSize));
@@ -23,7 +23,7 @@ namespace FakeTests.Tests
         [Test]
         public void ListObjects_Test1()
         {
-            var response = (ListObjects)EntityGenerator.CreateFake(typeof(ListObjects));
+            var response = (ListObjects)EntityGeneratorOrig.CreateFake(typeof(ListObjects));
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -31,7 +31,7 @@ namespace FakeTests.Tests
         [Test]
         public void ListObjects_Test2()
         {
-            var response = EntityGenerator.CreateFake<ListObjects>();
+            var response = EntityGeneratorOrig.CreateFake<ListObjects>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }

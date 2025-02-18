@@ -26,7 +26,7 @@
         [Test]
         public void ListPrimitives_Test1()
         {
-            var response = (ListPrimitives)EntityGenerator.CreateFake(typeof(ListPrimitives));
+            var response = (ListPrimitives)EntityGeneratorOrig.CreateFake(typeof(ListPrimitives));
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
@@ -36,7 +36,7 @@
         [Test]
         public void ListPrimitives_Test2()
         {
-            var response = EntityGenerator.CreateFake<ListPrimitives>();
+            var response = EntityGeneratorOrig.CreateFake<ListPrimitives>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
         }
