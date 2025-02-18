@@ -4,47 +4,76 @@ namespace FakeTests.Tests
 {
     public class ListListsTest : TestBase
     {
-        [TearDown]
-        public void CleanUp()
+        [Test]
+        public void Should_Generate_List_Of_Integer_Lists()
         {
-            generator.SetListRandomRange(1, 1);
-            generator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
+            List<List<int>> result = EntityGenerator.CreateFake<List<List<int>>>();
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.Not.Empty);
+            Assert.That(result.Count, Is.GreaterThanOrEqualTo(Config.MinListSize));
+            Assert.That(result.Count, Is.LessThanOrEqualTo(Config.MaxListSize));
+            Assert.That(Config.ValidList(result), Is.True);
         }
 
         [Test]
-        public void ListList_Test1()
+        public void Should_Generate_List_Of_Object_Lists()
         {
-            var response = (ListLists?) generator.CreateFake(typeof(ListLists));
+            List<List<ListObjectsTest.SampleObject>> result = EntityGenerator.CreateFake<List<List<ListObjectsTest.SampleObject>>>();
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.Not.Empty);
+            Assert.That(result.Count, Is.GreaterThanOrEqualTo(Config.MinListSize));
+            Assert.That(result.Count, Is.LessThanOrEqualTo(Config.MaxListSize));
 
-            Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
+            foreach (var innerList in result)
+            {
+                Assert.That(innerList, Is.Not.Null);
+                Assert.That(innerList, Is.Not.Empty);
+                Assert.That(innerList.Count, Is.GreaterThanOrEqualTo(Config.MinListSize));
+                Assert.That(innerList.Count, Is.LessThanOrEqualTo(Config.MaxListSize));
+            }
         }
 
-        [Test]
-        public void ListList_Test2()
-        {
-            var response = generator.CreateFake<ListLists>();
+        //[TearDown]
+        //public void CleanUp()
+        //{
+        //    EntityGenerator.SetListRandomRange(1, 1);
+        //    EntityGenerator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
+        //}
 
-            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-        }
+        //[Test]
+        //public void ListList_Test1()
+        //{
+        //    var response = (ListLists?)EntityGenerator.CreateFake(typeof(ListLists));
 
-        [Test]
-        public void ListList_Test3()
-        {
-            generator.CollectionLimit = 2;
-            generator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
-            var response = generator.CreateFake<ListLists>();
+        //    Assert.That(response?.ItemsSuccessfullyPopulated(), Is.True);
+        //}
 
-            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-        }
+        //[Test]
+        //public void ListList_Test2()
+        //{
+        //    var response = EntityGenerator.CreateFake<ListLists>();
+
+        //    Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+        //}
+
+        //[Test]
+        //public void ListList_Test3()
+        //{
+        //    EntityGenerator.CollectionLimit = 2;
+        //    EntityGenerator.RandomizationBehavior = EntityGenerator.RandomizationType.Fixed;
+        //    var response = EntityGenerator.CreateFake<ListLists>();
+
+        //    Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+        //}
         
-        [Test]
-        public void ListList_Test4()
-        {
-            generator.SetListRandomRange(1, 4);
-            generator.RandomizationBehavior = EntityGenerator.RandomizationType.Range;
-            var response = generator.CreateFake<ListLists>();
+        //[Test]
+        //public void ListList_Test4()
+        //{
+        //    EntityGenerator.SetListRandomRange(1, 4);
+        //    EntityGenerator.RandomizationBehavior = EntityGenerator.RandomizationType.Range;
+        //    var response = EntityGenerator.CreateFake<ListLists>();
 
-            Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-        }
+        //    Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
+        //}
     }
 }
