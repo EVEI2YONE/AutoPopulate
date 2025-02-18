@@ -37,7 +37,7 @@ namespace AutoPopulate.Core
             _config = config;
         }
 
-        public T CreateFake<T>() where T : class, new()
+        public T CreateFake<T>()
         {
             return (T)CreateFake(typeof(T));
         }

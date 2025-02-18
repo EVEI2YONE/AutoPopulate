@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace FakeTests.Tests
 {
+    [TestFixture]
     public class AttributePropertyTest : TestBase
     {
         private class SampleAttributeObject

@@ -3,6 +3,7 @@ using AutoPopulate.Interfaces;
 
 namespace FakeTests.Tests
 {
+    [TestFixture]
     public class RecursiveObjectTest : TestBase
     {
         private class SimpleRecursiveObject2
@@ -53,11 +54,11 @@ namespace FakeTests.Tests
         [Test]
         public void RecursiveObject_Test3()
         {
-            EntityGenerator.RecursiveLimit = 2;
+            (Config as EntityGenerationConfig).MaxRecursionDepth = 2;
             var response = EntityGenerator.CreateFake<RecursiveObject>();
 
             Assert.That(response.ItemsSuccessfullyPopulated(), Is.True);
-            EntityGenerator.RecursiveLimit = 1;
+            (Config as EntityGenerationConfig).MaxRecursionDepth = 1;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace AutoPopulate.Interfaces
 {
     public interface IEntityGenerator
     {
-        public T CreateFake<T>() where T : class, new();
+        public T CreateFake<T>();
         public object CreateFake(Type type);
     }
 }

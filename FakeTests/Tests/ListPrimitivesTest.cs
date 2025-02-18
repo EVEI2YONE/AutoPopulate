@@ -1,5 +1,6 @@
 ﻿namespace FakeTests.Tests
 {
+    [TestFixture]
     public class ListPrimitivesTest : TestBase
     {
         [Test]

@@ -1,5 +1,6 @@
 namespace FakeTests.Tests
 {
+    [TestFixture]
     public class ListObjectsTest : TestBase
     {
         public class SampleObject

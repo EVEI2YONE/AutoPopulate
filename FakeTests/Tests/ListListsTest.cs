@@ -2,6 +2,7 @@
 
 namespace FakeTests.Tests
 {
+    [TestFixture]
     public class ListListsTest : TestBase
     {
         [Test]
