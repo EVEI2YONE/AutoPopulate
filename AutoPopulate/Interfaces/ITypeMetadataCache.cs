@@ -11,6 +11,5 @@ namespace AutoPopulate.Interfaces
     public interface ITypeMetadataCache
     {
         PropertyInfo[] GetProperties(Type type);
-        void CacheType(Type type);
     }
 }
