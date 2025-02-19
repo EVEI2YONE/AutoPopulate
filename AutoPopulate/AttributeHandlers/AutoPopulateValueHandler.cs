@@ -13,7 +13,7 @@ namespace AutoPopulate.AttributeHandlers
         public object Handle(PropertyInfo property, object instance, EntityValueProvider provider)
         {
             var attr = property.GetCustomAttribute<AutoPopulateAttribute>();
-            return attr?.Values?.Length > 0 ? attr.Values[0] : provider.GetDefaultValue(property.PropertyType);
+            return attr?.Values?.Length > 0 ? attr.Values[0] : provider.GetDefaultValue(property.PropertyType, false);
         }
     }
 }

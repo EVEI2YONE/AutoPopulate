@@ -4,6 +4,14 @@
     public class NullableObjectTest : TestBase
     {
         [Test]
+        public void Should_Be_Null()
+        {
+            Config.ObjectNullableChance = 1.0;
+            var result = EntityGenerator.CreateFake<NullableObject>();
+            Assert.That(result, Is.Null);
+        }
+
+        [Test]
         public void NullableObject_Test1()
         {
             var response = (NullableObject)EntityGeneratorOrig.CreateFake(typeof(NullableObject));

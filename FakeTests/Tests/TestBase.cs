@@ -41,17 +41,14 @@ namespace FakeTests.Tests
                 MinListSize = 2,
                 MaxListSize = 5,
                 RandomizeListSize = true,
-                AllowNullObjects = false,
-                AllowNullPrimitives = false,
+                ObjectNullableChance = 0.0,
+                PrimitiveNullableChance = 0.0,
                 MaxRecursionDepth = 3,
                 ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
                 CustomPrimitiveGenerators = _defaultValues
             };
 
-            var typeMetadataCache = new TypeMetadataCache();
-            var entityValueProvider = new EntityValueProvider(Config);
-
-            EntityGenerator = new EntityGenerator(typeMetadataCache, entityValueProvider, Config);
+            EntityGenerator = new EntityGenerator(config: Config, null);
         }
 
         private void SetupOrig()
@@ -61,17 +58,14 @@ namespace FakeTests.Tests
                 MinListSize = 1,
                 MaxListSize = 1,
                 RandomizeListSize = false,
-                AllowNullObjects = false,
-                AllowNullPrimitives = false,
+                ObjectNullableChance = 0.0,
+                PrimitiveNullableChance = 0.0,
                 MaxRecursionDepth = 3,
                 CustomPrimitiveGenerators = _defaultValues,
                 ReferenceBehavior = RecursionReferenceBehavior.NewInstance
             };
 
-            var typeMetadataCache = new TypeMetadataCache();
-            var entityValueProvider = new EntityValueProvider(ConfigOrig);
-
-            EntityGeneratorOrig = new EntityGenerator(typeMetadataCache, entityValueProvider, ConfigOrig);
+            EntityGeneratorOrig = new EntityGenerator(config: ConfigOrig, null);
         }
 
         private static Dictionary<Type, Func<object>>  _defaultValues = new Dictionary<Type, Func<object>>()

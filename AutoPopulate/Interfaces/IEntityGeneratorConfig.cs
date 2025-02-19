@@ -9,26 +9,17 @@ namespace AutoPopulate.Interfaces
     /// </summary>
     public interface IEntityGenerationConfig
     {
-        // Primitive Value Handling
-        bool AllowNullPrimitives { get; }
-        bool AllowNullObjects { get; }
-        Dictionary<Type, Func<object>> CustomPrimitiveGenerators { get; }
+        public double ObjectNullableChance { get; set; }
+        public double PrimitiveNullableChance { get; set; }
+        public Dictionary<Type, Func<object>> CustomPrimitiveGenerators { get; }
 
         // List Generation
-        int MinListSize { get; }
-        int MaxListSize { get; }
-        bool RandomizeListSize { get; }
+        public int MinListSize { get; }
+        public int MaxListSize { get; }
+        public bool RandomizeListSize { get; }
 
         // Recursive Object Handling
-        int MaxRecursionDepth { get; }
-        RecursionReferenceBehavior ReferenceBehavior { get; }
-
-        // Attribute & Type Interception
-        bool UseAutoPopulateAttributes { get; }
-        bool UseTypeInterceptors { get; }
-
-        // Performance & Debugging
-        bool EnableParallelProcessing { get; }
-        bool EnableDebugLogging { get; }
+        public int MaxRecursionDepth { get; }
+        public RecursionReferenceBehavior ReferenceBehavior { get; }
     }
 }

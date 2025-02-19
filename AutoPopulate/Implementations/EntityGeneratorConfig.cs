@@ -10,8 +10,8 @@ namespace AutoPopulate.Implementations
     /// </summary>
     public class EntityGenerationConfig : IEntityGenerationConfig
     {
-        public bool AllowNullPrimitives { get; set; } = false;
-        public bool AllowNullObjects { get; set; } = false;
+        public double ObjectNullableChance { get; set; }
+        public double PrimitiveNullableChance { get; set; }
         public Dictionary<Type, Func<object>> CustomPrimitiveGenerators { get; set; } = new();
 
         public int MinListSize { get; set; } = 1;
@@ -20,11 +20,5 @@ namespace AutoPopulate.Implementations
 
         public int MaxRecursionDepth { get; set; } = 3;
         public RecursionReferenceBehavior ReferenceBehavior { get; set; } = RecursionReferenceBehavior.NewInstance;
-
-        public bool UseAutoPopulateAttributes { get; set; } = true;
-        public bool UseTypeInterceptors { get; set; } = true;
-
-        public bool EnableParallelProcessing { get; set; } = false;
-        public bool EnableDebugLogging { get; set; } = false;
     }
 }

@@ -19,10 +19,7 @@ namespace FakeTests.Tests
         {
             SampleAttributeObject result = EntityGenerator.CreateFake<SampleAttributeObject>();
             Assert.That(result, Is.Not.Null);
-            if (Config.UseAutoPopulateAttributes)
-            {
-                Assert.That(result.Name, Is.EqualTo("TestValue"));
-            }
+            Assert.That(result.Name, Is.EqualTo("TestValue"));
         }
 
         [Test]

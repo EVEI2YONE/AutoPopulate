@@ -14,6 +14,8 @@ namespace AutoPopulate.Implementations
     {
         private readonly IEntityGenerationConfig _config;
         private readonly Dictionary<Type, IAttributeHandler> _attributeHandlers = new();
+        private static Random _random = new Random();
+        private const double _epsilon = 0.0000001;
 
         private readonly Dictionary<Type, Func<object>> _defaultValues = new()
         {
@@ -36,7 +38,22 @@ namespace AutoPopulate.Implementations
 
         public EntityValueProvider(IEntityGenerationConfig config)
         {
-            _config = config;
+            _config = config ?? new EntityGenerationConfig()
+            {
+                PrimitiveNullableChance = 0.5,
+                ObjectNullableChance = 0.5,
+                CustomPrimitiveGenerators = new Dictionary<Type, Func<object>>(),
+                MaxRecursionDepth = 10,
+                MinListSize = 1,
+                MaxListSize = 10,
+                RandomizeListSize = true,
+                ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
+            };
+        }
+
+        private bool GenerateNullable(double nullableChance, Type type)
+        {
+            return nullableChance > _epsilon && nullableChance >= _random.NextDouble() + _epsilon;
         }
 
         public void RegisterAttributeHandler<T>(IAttributeHandler handler) where T : Attribute
@@ -51,7 +68,7 @@ namespace AutoPopulate.Implementations
                    (Nullable.GetUnderlyingType(type) is Type underlyingType && _defaultValues.ContainsKey(underlyingType));
         }
 
-        public object GetDefaultValue(Type type)
+        public object GetDefaultValue(Type type, bool isIndex)
         {
             if (_config.CustomPrimitiveGenerators.TryGetValue(type, out var generator))
                 return generator();
@@ -59,6 +76,8 @@ namespace AutoPopulate.Implementations
             Func<object> value;
             if (Nullable.GetUnderlyingType(type) is Type underlyingType)
             {
+                if (!isIndex && GenerateNullable(_config.PrimitiveNullableChance, type))
+                    return null;
                 return _defaultValues.TryGetValue(underlyingType, out value) ? value() : Activator.CreateInstance(underlyingType)!;
             }
 
@@ -67,7 +86,7 @@ namespace AutoPopulate.Implementations
 
         public object CreateInstance(Type type)
         {
-            if (_config.AllowNullObjects && type.IsClass)
+            if (type.IsClass && GenerateNullable(_config.ObjectNullableChance, type))
                 return null;
 
             if (type.IsGenericType)

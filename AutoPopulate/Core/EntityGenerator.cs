@@ -25,13 +25,10 @@ namespace AutoPopulate.Core
         private readonly IEntityGenerationConfig _config;
         private readonly IDictionary<Type, int> _recursionDepths = new Dictionary<Type, int>();
 
-        public EntityGenerator(
-            ITypeMetadataCache typeMetadataCache,
-            IEntityValueProvider entityValueProvider,
-            IEntityGenerationConfig config)
+        public EntityGenerator(IEntityGenerationConfig config, IEntityValueProvider entityValueProvider)
         {
-            _typeMetadataCache = typeMetadataCache;
-            _entityValueProvider = entityValueProvider;
+            _typeMetadataCache = new TypeMetadataCache();
+            _entityValueProvider = entityValueProvider ?? new EntityValueProvider(config);
             _config = config;
             RegisterAutoPopulateAttributeHandlers();
         }
@@ -43,14 +40,20 @@ namespace AutoPopulate.Core
 
         public T CreateFake<T>()
         {
-            return (T)CreateFake(typeof(T));
+            return (T) CreateFakeInternal(typeof(T), false);
         }
 
         public object CreateFake(Type type)
         {
+            return CreateFakeInternal(type, false);
+        }
+        
+
+        private object CreateFakeInternal(Type type, bool isIndex)
+        {
             if (_entityValueProvider.HasDefaultValue(type))
             {
-                return _entityValueProvider.GetDefaultValue(type);
+                return _entityValueProvider.GetDefaultValue(type, isIndex);
             }
 
             if (!_recursionDepths.ContainsKey(type))
@@ -66,6 +69,9 @@ namespace AutoPopulate.Core
             _recursionDepths[type]++;
 
             object instance = _entityValueProvider.CreateInstance(type);
+
+            if (instance == null)
+                return null;
 
             // Process class-level attributes
             foreach (var attr in type.GetCustomAttributes())
@@ -87,8 +93,8 @@ namespace AutoPopulate.Core
                 int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
                 for (int i = 0; i < count; i++)
                 {
-                    object key = CreateFake(keyType);
-                    object value = CreateFake(valueType);
+                    object key = CreateFakeInternal(keyType, true);
+                    object value = CreateFakeInternal(valueType, false);
                     addMethod.Invoke(dictionary, new object[] { key, value });
                 }
 
@@ -103,7 +109,7 @@ namespace AutoPopulate.Core
                 int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
                 for (int i = 0; i < count; i++)
                 {
-                    object item = CreateFake(elementType);
+                    object item = CreateFakeInternal(elementType, false);
                     addMethod.Invoke(list, new object[] { item });
                 }
 
@@ -134,7 +140,7 @@ namespace AutoPopulate.Core
                     }
                 }
 
-                object value = CreateFake(prop.PropertyType);
+                object value = CreateFakeInternal(prop.PropertyType, false);
 
                 if (value == null && prop.PropertyType.IsValueType && Nullable.GetUnderlyingType(prop.PropertyType) == null)
                     continue;
