@@ -14,7 +14,7 @@
 	  <PackageTags>EntityGenerator;Generator;Fake;Mock;Populate;Auto;Test</PackageTags>
 	  <PackageLicenseFile>MIT License.txt</PackageLicenseFile>
 	  <PackageOutputPath>bin\Packages</PackageOutputPath>
-	  <VersionPrefix>2.0.0</VersionPrefix>
+	  <VersionPrefix>2.0.0</VersionPrefix> 
   </PropertyGroup>
 
   <ItemGroup>
