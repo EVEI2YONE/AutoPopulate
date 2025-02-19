@@ -45,10 +45,10 @@ namespace FakeTests.Tests
                 PrimitiveNullableChance = 0.0,
                 MaxRecursionDepth = 3,
                 ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
-                CustomPrimitiveGenerators = _defaultValues
+                TypeInterceptorValueProviders = _defaultValues
             };
 
-            EntityGenerator = new EntityGenerator(config: Config, null);
+            EntityGenerator = new EntityGenerator(config: Config);
         }
 
         private void SetupOrig()
@@ -61,11 +61,11 @@ namespace FakeTests.Tests
                 ObjectNullableChance = 0.0,
                 PrimitiveNullableChance = 0.0,
                 MaxRecursionDepth = 3,
-                CustomPrimitiveGenerators = _defaultValues,
+                TypeInterceptorValueProviders = _defaultValues,
                 ReferenceBehavior = RecursionReferenceBehavior.NewInstance
             };
 
-            EntityGeneratorOrig = new EntityGenerator(config: ConfigOrig, null);
+            EntityGeneratorOrig = new EntityGenerator(config: ConfigOrig);
         }
 
         private static Dictionary<Type, Func<object>>  _defaultValues = new Dictionary<Type, Func<object>>()

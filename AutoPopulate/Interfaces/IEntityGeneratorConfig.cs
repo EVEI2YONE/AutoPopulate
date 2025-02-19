@@ -11,7 +11,6 @@ namespace AutoPopulate.Interfaces
     {
         public double ObjectNullableChance { get; set; }
         public double PrimitiveNullableChance { get; set; }
-        public Dictionary<Type, Func<object>> CustomPrimitiveGenerators { get; }
 
         // List Generation
         public int MinListSize { get; }
@@ -21,5 +20,7 @@ namespace AutoPopulate.Interfaces
         // Recursive Object Handling
         public int MaxRecursionDepth { get; }
         public RecursionReferenceBehavior ReferenceBehavior { get; }
+        public Dictionary<Type, Func<object>> TypeInterceptorValueProviders { get; }
+        public Dictionary<Attribute, IAttributeHandler> AttributeHandlers { get; }
     }
 }

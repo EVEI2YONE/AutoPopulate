@@ -25,10 +25,18 @@ namespace AutoPopulate.Core
         private readonly IEntityGenerationConfig _config;
         private readonly IDictionary<Type, int> _recursionDepths = new Dictionary<Type, int>();
 
-        public EntityGenerator(IEntityGenerationConfig config, IEntityValueProvider entityValueProvider)
+        public EntityGenerator()
         {
             _typeMetadataCache = new TypeMetadataCache();
-            _entityValueProvider = entityValueProvider ?? new EntityValueProvider(config);
+            _entityValueProvider = new EntityValueProvider();
+            _config = _entityValueProvider.Config;
+            RegisterAutoPopulateAttributeHandlers();
+        }
+
+        public EntityGenerator(IEntityGenerationConfig config)
+        {
+            _typeMetadataCache = new TypeMetadataCache();
+            _entityValueProvider = new EntityValueProvider(config);
             _config = config;
             RegisterAutoPopulateAttributeHandlers();
         }

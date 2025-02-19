@@ -20,8 +20,8 @@ namespace FakeTests
         public static bool ValidPrimitiveList<T>(this IEntityGenerationConfig config, List<T> list) where T : struct
         {
             if (list == null || !list.Any()) return false;
-            return config.CustomPrimitiveGenerators.ContainsKey(typeof(T)) &&
-                   list.All(x => config.CustomPrimitiveGenerators[typeof(T)]().Equals(x));
+            return config.TypeInterceptorValueProviders.ContainsKey(typeof(T)) &&
+                   list.All(x => config.TypeInterceptorValueProviders[typeof(T)]().Equals(x));
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace FakeTests
         public static bool ValidNullablePrimitiveList<T>(this IEntityGenerationConfig config, List<Nullable<T>> list) where T : struct
         {
             if (list == null || !list.Any()) return false;
-            if (config.CustomPrimitiveGenerators.Any() && config.CustomPrimitiveGenerators.ContainsKey(typeof(T))) return true;
+            if (config.TypeInterceptorValueProviders.Any() && config.TypeInterceptorValueProviders.ContainsKey(typeof(T))) return true;
             return list.All(x => x.GetType() == typeof(T));
         }
 
@@ -43,8 +43,8 @@ namespace FakeTests
 
             return !list.Any(x =>
             {
-                if (config.CustomPrimitiveGenerators.ContainsKey(typeof(T)))
-                    return list.Any(y => !config.CustomPrimitiveGenerators[typeof(T)]().Equals(y));
+                if (config.TypeInterceptorValueProviders.ContainsKey(typeof(T)))
+                    return list.Any(y => !config.TypeInterceptorValueProviders[typeof(T)]().Equals(y));
                 else if (x is ITestableObject testable)
                     return list.Any(y => !testable.ItemsSuccessfullyPopulated());
                 return false;

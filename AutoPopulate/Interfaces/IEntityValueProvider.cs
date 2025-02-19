@@ -7,6 +7,7 @@ namespace AutoPopulate.Interfaces
 {
     public interface IEntityValueProvider
     {
+        public IEntityGenerationConfig Config { get; }
         public void RegisterAttributeHandler<T>(IAttributeHandler handler) where T : Attribute;
         public bool HasDefaultValue(Type type);
         public object GetDefaultValue(Type type, bool isIndex);

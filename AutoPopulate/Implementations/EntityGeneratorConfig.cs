@@ -12,7 +12,6 @@ namespace AutoPopulate.Implementations
     {
         public double ObjectNullableChance { get; set; }
         public double PrimitiveNullableChance { get; set; }
-        public Dictionary<Type, Func<object>> CustomPrimitiveGenerators { get; set; } = new();
 
         public int MinListSize { get; set; } = 1;
         public int MaxListSize { get; set; } = 5;
@@ -20,5 +19,7 @@ namespace AutoPopulate.Implementations
 
         public int MaxRecursionDepth { get; set; } = 3;
         public RecursionReferenceBehavior ReferenceBehavior { get; set; } = RecursionReferenceBehavior.NewInstance;
+        public Dictionary<Type, Func<object>> TypeInterceptorValueProviders { get; set; } = new();
+        public Dictionary<Attribute, IAttributeHandler> AttributeHandlers { get; set; } = new();
     }
 }

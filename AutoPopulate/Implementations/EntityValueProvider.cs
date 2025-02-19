@@ -13,6 +13,7 @@ namespace AutoPopulate.Implementations
     public class EntityValueProvider : IEntityValueProvider
     {
         private readonly IEntityGenerationConfig _config;
+        public IEntityGenerationConfig Config => _config;
         private readonly Dictionary<Type, IAttributeHandler> _attributeHandlers = new();
         private static Random _random = new Random();
         private const double _epsilon = 0.0000001;
@@ -36,18 +37,21 @@ namespace AutoPopulate.Implementations
             { typeof(object), () => "object" },
         };
 
+        public EntityValueProvider() : this(null) { }
+
         public EntityValueProvider(IEntityGenerationConfig config)
         {
             _config = config ?? new EntityGenerationConfig()
             {
-                PrimitiveNullableChance = 0.5,
-                ObjectNullableChance = 0.5,
-                CustomPrimitiveGenerators = new Dictionary<Type, Func<object>>(),
-                MaxRecursionDepth = 10,
                 MinListSize = 1,
-                MaxListSize = 10,
+                MaxListSize = 5,
                 RandomizeListSize = true,
+                ObjectNullableChance = 0.0,
+                PrimitiveNullableChance = 0.0,
+                MaxRecursionDepth = 3,
                 ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
+                TypeInterceptorValueProviders = _defaultValues,
+                AttributeHandlers = new Dictionary<Attribute, IAttributeHandler>()
             };
         }
 
@@ -63,14 +67,14 @@ namespace AutoPopulate.Implementations
 
         public bool HasDefaultValue(Type type)
         {
-            return _config.CustomPrimitiveGenerators.ContainsKey(type) ||
+            return _config.TypeInterceptorValueProviders.ContainsKey(type) ||
                    _defaultValues.ContainsKey(type) ||
                    (Nullable.GetUnderlyingType(type) is Type underlyingType && _defaultValues.ContainsKey(underlyingType));
         }
 
         public object GetDefaultValue(Type type, bool isIndex)
         {
-            if (_config.CustomPrimitiveGenerators.TryGetValue(type, out var generator))
+            if (_config.TypeInterceptorValueProviders.TryGetValue(type, out var generator))
                 return generator();
 
             Func<object> value;
