@@ -57,6 +57,7 @@ public enum GenerationOption
 
 
 ## Example
+### Configuration
 ```csharp
 Config = new EntityGenerationConfig
 {
@@ -75,6 +76,15 @@ Config = new EntityGenerationConfig
 };
 
 EntityGenerator = new EntityGenerator(config: Config);
+```
+
+### AutoPopulateAttribute
+```csharp
+private class SampleAttributeObject //Use TypeInterceptor, or use the AutoPopulate attribute
+{
+    [AutoPopulate("TestValue1_", "TestValue_2", 3, true "...TestValue_N")] //pre-defined, user-defined set of options
+    public string Name { get; set; }
+}
 ```
 
 ## Default types supported
