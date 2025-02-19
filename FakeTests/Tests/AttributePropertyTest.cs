@@ -1,4 +1,4 @@
-﻿using AutoPopulate.Core;
+﻿using AutoPopulate.Attributes;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Security.Cryptography.X509Certificates;

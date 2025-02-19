@@ -49,10 +49,9 @@ namespace FakeTests.Tests
             };
 
             var typeMetadataCache = new TypeMetadataCache();
-            var objectFactory = new ObjectFactory(Config);
-            var defaultValueProvider = new AutoPopulate.Implementations.DefaultValueProvider(Config);
+            var entityValueProvider = new EntityValueProvider(Config);
 
-            EntityGenerator = new EntityGenerator(typeMetadataCache, objectFactory, defaultValueProvider, Config);
+            EntityGenerator = new EntityGenerator(typeMetadataCache, entityValueProvider, Config);
         }
 
         private void SetupOrig()
@@ -70,10 +69,9 @@ namespace FakeTests.Tests
             };
 
             var typeMetadataCache = new TypeMetadataCache();
-            var objectFactory = new ObjectFactory(ConfigOrig);
-            var defaultValueProvider = new AutoPopulate.Implementations.DefaultValueProvider(ConfigOrig);
+            var entityValueProvider = new EntityValueProvider(ConfigOrig);
 
-            EntityGeneratorOrig = new EntityGenerator(typeMetadataCache, objectFactory, defaultValueProvider, ConfigOrig);
+            EntityGeneratorOrig = new EntityGenerator(typeMetadataCache, entityValueProvider, ConfigOrig);
         }
 
         private static Dictionary<Type, Func<object>>  _defaultValues = new Dictionary<Type, Func<object>>()

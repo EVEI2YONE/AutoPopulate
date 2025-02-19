@@ -1,4 +1,7 @@
-﻿using AutoPopulate.Interfaces;
+﻿using AutoPopulate.AttributeHandlers;
+using AutoPopulate.Attributes;
+using AutoPopulate.Implementations;
+using AutoPopulate.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -18,21 +21,24 @@ namespace AutoPopulate.Core
     public class EntityGenerator : IEntityGenerator
     {
         private readonly ITypeMetadataCache _typeMetadataCache;
-        private readonly IObjectFactory _objectFactory;
-        private readonly IDefaultValueProvider _defaultValueProvider;
+        private readonly IEntityValueProvider _entityValueProvider;
         private readonly IEntityGenerationConfig _config;
         private readonly IDictionary<Type, int> _recursionDepths = new Dictionary<Type, int>();
 
         public EntityGenerator(
             ITypeMetadataCache typeMetadataCache,
-            IObjectFactory objectFactory,
-            IDefaultValueProvider defaultValueProvider,
+            IEntityValueProvider entityValueProvider,
             IEntityGenerationConfig config)
         {
             _typeMetadataCache = typeMetadataCache;
-            _objectFactory = objectFactory;
-            _defaultValueProvider = defaultValueProvider;
+            _entityValueProvider = entityValueProvider;
             _config = config;
+            RegisterAutoPopulateAttributeHandlers();
+        }
+
+        private void RegisterAutoPopulateAttributeHandlers()
+        {
+            _entityValueProvider.RegisterAttributeHandler<AutoPopulateAttribute>(new AutoPopulateValueHandler());
         }
 
         public T CreateFake<T>()
@@ -42,9 +48,9 @@ namespace AutoPopulate.Core
 
         public object CreateFake(Type type)
         {
-            if (_defaultValueProvider.HasDefaultValue(type))
+            if (_entityValueProvider.HasDefaultValue(type))
             {
-                return _defaultValueProvider.GetDefaultValue(type);
+                return _entityValueProvider.GetDefaultValue(type);
             }
 
             if (!_recursionDepths.ContainsKey(type))
@@ -59,49 +65,43 @@ namespace AutoPopulate.Core
 
             _recursionDepths[type]++;
 
-            object instance = _objectFactory.CreateInstance(type);
+            object instance = _entityValueProvider.CreateInstance(type);
 
-            if (instance is IDictionary dictionary && type.IsGenericType)
+            // Process class-level attributes
+            foreach (var attr in type.GetCustomAttributes())
             {
-                Type[] genericArgs = type.GetGenericArguments();
-                Type keyType = genericArgs[0];
-                Type valueType = genericArgs[1];
-                MethodInfo addMethod = type.GetMethod("Add");
-
-                int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
-                for (int i = 0; i < count; i++)
+                object? modifiedInstance = _entityValueProvider.HandleAttribute(attr, instance);
+                if (modifiedInstance != null)
                 {
-                    object key = CreateFake(keyType);
-                    object value = CreateFake(valueType);
-                    addMethod.Invoke(dictionary, new object[] { key, value });
+                    return modifiedInstance; // Short-circuit if an attribute provides a replacement
                 }
-
-                _recursionDepths[type]--;
-                return instance;
-            }
-            else if (instance is IList list && type.IsGenericType)
-            {
-                Type elementType = type.GetGenericArguments()[0];
-                MethodInfo addMethod = type.GetMethod("Add");
-
-                int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
-                for (int i = 0; i < count; i++)
-                {
-                    object item = CreateFake(elementType);
-                    addMethod.Invoke(list, new object[] { item });
-                }
-
-                _recursionDepths[type]--;
-                return instance;
             }
 
             PropertyInfo[] properties = _typeMetadataCache.GetProperties(type);
             foreach (var prop in properties)
             {
-                if (!prop.CanWrite || prop.GetIndexParameters().Length > 0)
+                if (!prop.CanWrite || prop.GetIndexParameters().Length > 0 || prop.GetCustomAttribute<AutoPopulateIgnoreAttribute>() != null)
                     continue;
 
+                object? attributeValue = _entityValueProvider.HandleAttributes(prop, instance);
+                if (attributeValue != null)
+                {
+                    prop.SetValue(instance, attributeValue);
+                    continue; // Short-circuit if an attribute supplies a valid value
+                }
+
+                foreach (var attr in prop.GetCustomAttributes())
+                {
+                    object? modifiedValue = _entityValueProvider.HandleAttribute(attr, instance);
+                    if (modifiedValue != null)
+                    {
+                        prop.SetValue(instance, modifiedValue);
+                        continue; // Short-circuit if attribute provides a replacement value
+                    }
+                }
+
                 object value = CreateFake(prop.PropertyType);
+
                 if (value == null && prop.PropertyType.IsValueType && Nullable.GetUnderlyingType(prop.PropertyType) == null)
                     continue;
 

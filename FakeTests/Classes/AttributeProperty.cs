@@ -1,4 +1,5 @@
 ﻿using AutoPopulate;
+using AutoPopulate.Attributes;
 using AutoPopulate.Core;
 using FakeTests.Helpers;
 using System.Runtime.CompilerServices;
