@@ -31,7 +31,8 @@ AutoPopulate uses the IEntityGenerationConfig interface to control key aspects o
 - **List Generation:** Rules for generating lists, such as minimum/maximum sizes and whether the list size should be randomized.
 - **Recursive Object Handling:** Limits for recursion depth and handling of references to avoid circular dependency issues.
 
-Below is the definition of the configuration interface:
+## IEntityGenerationConfig
+# Below is the definition of the configuration interface:
 
 ```csharp
 public interface IEntityGenerationConfig
@@ -55,7 +56,7 @@ public enum GenerationOption
 ```
 
 
-##Example
+## Example
 ```csharp
 Config = new EntityGenerationConfig
 {
@@ -76,8 +77,8 @@ Config = new EntityGenerationConfig
 EntityGenerator = new EntityGenerator(config: Config);
 ```
 
-##Default types supported
-#Can be overriden via TypeInterceptorValueProviders
+## Default types supported
+# Can be overriden via TypeInterceptorValueProviders
 ```csharp
 private readonly Dictionary<Type, Func<object>> DefaultTypeInterceptorValueProviders = new()
 {
