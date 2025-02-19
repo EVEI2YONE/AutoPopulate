@@ -77,6 +77,40 @@ namespace AutoPopulate.Core
                 }
             }
 
+            if (instance is IDictionary dictionary && type.IsGenericType)
+            {
+                Type[] genericArgs = type.GetGenericArguments();
+                Type keyType = genericArgs[0];
+                Type valueType = genericArgs[1];
+                MethodInfo addMethod = type.GetMethod("Add");
+
+                int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
+                for (int i = 0; i < count; i++)
+                {
+                    object key = CreateFake(keyType);
+                    object value = CreateFake(valueType);
+                    addMethod.Invoke(dictionary, new object[] { key, value });
+                }
+
+                _recursionDepths[type]--;
+                return instance;
+            }
+            else if (instance is IList list && type.IsGenericType)
+            {
+                Type elementType = type.GetGenericArguments()[0];
+                MethodInfo addMethod = type.GetMethod("Add");
+
+                int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
+                for (int i = 0; i < count; i++)
+                {
+                    object item = CreateFake(elementType);
+                    addMethod.Invoke(list, new object[] { item });
+                }
+
+                _recursionDepths[type]--;
+                return instance;
+            }
+
             PropertyInfo[] properties = _typeMetadataCache.GetProperties(type);
             foreach (var prop in properties)
             {
