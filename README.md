@@ -21,12 +21,80 @@ The primary purpose of AutoPopulate is to:
 
 ## Configuration Options
 
-Below is a list of configurable options that control default behaviors in AutoPopulate:
+---
 
-1. **Default String Value**  
-   *Description:* Sets the default value for string properties when no explicit value is provided.  
-   *Example:*
-   ```csharp
-   AutoPopulate.Configure(options => {
-       options.DefaultString = "N/A";
-   });
+## Overview
+
+AutoPopulate uses the IEntityGenerationConfig interface to control key aspects of entity generation, including:
+- **Nullability Chances:** Probabilities for setting object or primitive properties to null.
+- **Custom Primitive Generators:** Functions to generate specific primitive values.
+- **List Generation:** Rules for generating lists, such as minimum/maximum sizes and whether the list size should be randomized.
+- **Recursive Object Handling:** Limits for recursion depth and handling of references to avoid circular dependency issues.
+
+Below is the definition of the configuration interface:
+
+```csharp
+public interface IEntityGenerationConfig
+{
+    public int MinListSize { get; set; }
+    public int MaxListSize { get; set; }
+    public bool RandomizeListSize { get; set; }
+    public int MaxRecursionDepth { get; set; }
+    public Dictionary<Type, Func<object>> TypeInterceptorValueProviders { get; set; }
+    public Dictionary<Attribute, IAttributeHandler> AttributeHandlers { get; set; }
+    public Dictionary<GenerationOption, double> OptionChances { get; set; }
+}
+
+//open to extensibility to define probability order instead
+public enum GenerationOption
+{
+    NullablePrimitiveChance,
+    NullableObjectChance,
+    RecursionExistingReferenceChance //not implemented yet
+}
+```
+
+
+##Example
+```csharp
+Config = new EntityGenerationConfig
+{
+    MinListSize = 2,
+    MaxListSize = 5,
+    RandomizeListSize = true,
+    MaxRecursionDepth = 3,
+    TypeInterceptorValueProviders = _defaultValues,
+    AttributeHandlers = new Dictionary<Attribute, IAttributeHandler>(),
+    OptionChances = new Dictionary<GenerationOption, double>()
+    {
+        { GenerationOption.NullableObjectChance, 0.1 },
+        { GenerationOption.NullablePrimitiveChance, 0.1 },
+        { GenerationOption.RecursionExistingReferenceChance, 0.1 },
+    }
+};
+
+EntityGenerator = new EntityGenerator(config: Config);
+```
+
+##Default types supported
+#Can be overriden via TypeInterceptorValueProviders
+```csharp
+private readonly Dictionary<Type, Func<object>> DefaultTypeInterceptorValueProviders = new()
+{
+    { typeof(string), () => "_" },
+    { typeof(bool), () => true },
+    { typeof(short), () => (short)1 },
+    { typeof(int), () => 1 },
+    { typeof(uint), () => 1u },
+    { typeof(long), () => 1L },
+    { typeof(ulong), () => 1ul },
+    { typeof(decimal), () => 1m },
+    { typeof(double), () => 1.0d },
+    { typeof(float), () => 1.0f },
+    { typeof(char), () => '_' },
+    { typeof(byte), () => (byte)('_') },
+    { typeof(sbyte), () => (sbyte)1 },
+    { typeof(DateTime), () => DateTime.Now },
+    { typeof(object), () => "object" },
+};
+```
