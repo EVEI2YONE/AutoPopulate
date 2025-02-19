@@ -28,10 +28,10 @@ namespace FakeTests.Tests
             (Config as EntityGenerationConfig).MaxRecursionDepth = 2;
             SimpleRecursiveObject2 result = EntityGenerator.CreateFake<SimpleRecursiveObject2>();
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Child, Is.True);
             if (Config.MaxRecursionDepth == 2)
             {
-                Assert.That(result.Child.Child, Is.Not.Null);
+                Assert.That(result?.Child?.Child, Is.Not.Null);
+                Assert.That(result?.Child?.Child?.Child, Is.Null);
             }
         }
 

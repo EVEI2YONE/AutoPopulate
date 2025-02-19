@@ -12,7 +12,7 @@ namespace FakeTests.Tests
         [Test]
         public void Should_Generate_List_Of_Objects()
         {
-            List<SampleObject> result = EntityGeneratorOrig.CreateFake<List<SampleObject>>();
+            List<SampleObject> result = EntityGenerator.CreateFake<List<SampleObject>>();
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.Not.Empty);
             Assert.That(result.Count, Is.GreaterThanOrEqualTo(Config.MinListSize));

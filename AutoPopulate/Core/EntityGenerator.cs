@@ -21,6 +21,7 @@ namespace AutoPopulate.Core
         private readonly IObjectFactory _objectFactory;
         private readonly IDefaultValueProvider _defaultValueProvider;
         private readonly IEntityGenerationConfig _config;
+        private readonly IDictionary<Type, int> _recursionDepths = new Dictionary<Type, int>();
 
         public EntityGenerator(
             ITypeMetadataCache typeMetadataCache,
@@ -46,6 +47,18 @@ namespace AutoPopulate.Core
                 return _defaultValueProvider.GetDefaultValue(type);
             }
 
+            if (!_recursionDepths.ContainsKey(type))
+            {
+                _recursionDepths[type] = 0;
+            }
+
+            if (_recursionDepths[type] > _config.MaxRecursionDepth)
+            {
+                return null;
+            }
+
+            _recursionDepths[type]++;
+
             object instance = _objectFactory.CreateInstance(type);
 
             if (instance is IDictionary dictionary && type.IsGenericType)
@@ -63,6 +76,22 @@ namespace AutoPopulate.Core
                     addMethod.Invoke(dictionary, new object[] { key, value });
                 }
 
+                _recursionDepths[type]--;
+                return instance;
+            }
+            else if (instance is IList list && type.IsGenericType)
+            {
+                Type elementType = type.GetGenericArguments()[0];
+                MethodInfo addMethod = type.GetMethod("Add");
+
+                int count = _config.RandomizeListSize ? new Random().Next(_config.MinListSize, _config.MaxListSize + 1) : _config.MaxListSize;
+                for (int i = 0; i < count; i++)
+                {
+                    object item = CreateFake(elementType);
+                    addMethod.Invoke(list, new object[] { item });
+                }
+
+                _recursionDepths[type]--;
                 return instance;
             }
 
@@ -89,6 +118,8 @@ namespace AutoPopulate.Core
                 }
                 prop.SetValue(instance, value);
             }
+
+            _recursionDepths[type]--;
             return instance;
         }
     }

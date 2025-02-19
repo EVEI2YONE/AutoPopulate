@@ -24,7 +24,7 @@ namespace FakeTests.Tests
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            // This can be used for any global setup if needed
+            TestableObjectExtensions.DefaultValues = _defaultValues;
         }
 
         [SetUp]
@@ -44,7 +44,8 @@ namespace FakeTests.Tests
                 AllowNullObjects = false,
                 AllowNullPrimitives = false,
                 MaxRecursionDepth = 3,
-                ReferenceBehavior = RecursionReferenceBehavior.NewInstance
+                ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
+                CustomPrimitiveGenerators = _defaultValues
             };
 
             var typeMetadataCache = new TypeMetadataCache();
@@ -64,6 +65,7 @@ namespace FakeTests.Tests
                 AllowNullObjects = false,
                 AllowNullPrimitives = false,
                 MaxRecursionDepth = 3,
+                CustomPrimitiveGenerators = _defaultValues,
                 ReferenceBehavior = RecursionReferenceBehavior.NewInstance
             };
 
@@ -73,5 +75,24 @@ namespace FakeTests.Tests
 
             EntityGeneratorOrig = new EntityGenerator(typeMetadataCache, objectFactory, defaultValueProvider, ConfigOrig);
         }
+
+        private static Dictionary<Type, Func<object>>  _defaultValues = new Dictionary<Type, Func<object>>()
+        {
+            { typeof(string), () => "_" },
+            { typeof(bool), () => true },
+            { typeof(short), () => (short)1 },
+            { typeof(int), () => 1 },
+            { typeof(uint), () => 1u },
+            { typeof(long), () => 1L },
+            { typeof(ulong), () => 1ul },
+            { typeof(decimal), () => 1m },
+            { typeof(double), () => 1.0d },
+            { typeof(float), () => 1.0f },
+            { typeof(char), () => '_' },
+            { typeof(byte), () => (byte)('_') },
+            { typeof(sbyte), () => (sbyte)1 },
+            { typeof(DateTime), () => DateTime.Now },
+            { typeof(object), () => "object" }
+        };
     }
 }

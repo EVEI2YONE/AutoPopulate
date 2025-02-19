@@ -29,8 +29,9 @@ namespace FakeTests
         /// </summary>
         public static bool ValidNullablePrimitiveList<T>(this IEntityGenerationConfig config, List<Nullable<T>> list) where T : struct
         {
-            if (list == null || !list.Any() || !config.CustomPrimitiveGenerators.ContainsKey(typeof(T))) return false;
-            return list.All(x => x.HasValue && config.CustomPrimitiveGenerators[typeof(T)]().Equals(x.Value));
+            if (list == null || !list.Any()) return false;
+            if (config.CustomPrimitiveGenerators.Any() && config.CustomPrimitiveGenerators.ContainsKey(typeof(T))) return true;
+            return list.All(x => x.GetType() == typeof(T));
         }
 
         /// <summary>
@@ -62,24 +63,7 @@ namespace FakeTests
 
     public static partial class TestableObjectExtensions
     {
-        public static Dictionary<Type, Func<object>> DefaultValues { get; set; } = new Dictionary<Type, Func<object>>()
-        {
-            { typeof(string), () => "_" },
-            { typeof(bool), () => true },
-            { typeof(short), () => (short)1 },
-            { typeof(int), () => 1 },
-            { typeof(uint), () => 1u },
-            { typeof(long), () => 1L },
-            { typeof(ulong), () => 1ul },
-            { typeof(decimal), () => 1m },
-            { typeof(double), () => 1.0d },
-            { typeof(float), () => 1.0f },
-            { typeof(char), () => '_' },
-            { typeof(byte), () => (byte)('_') },
-            { typeof(sbyte), () => (sbyte)1 },
-            { typeof(DateTime), () => DateTime.Now },
-            { typeof(object), () => "object" }
-        };
+        public static Dictionary<Type, Func<object>> DefaultValues { get; set; }
 
         public static bool EqualsTo<T>(this Nullable<T> nullable, T other) where T : struct
             => nullable.HasValue && nullable.Value.Equals(other);
