@@ -18,45 +18,16 @@ namespace AutoPopulate.Implementations
         private static Random _random = new Random();
         private const double _epsilon = 0.0000001;
 
-        private readonly Dictionary<Type, Func<object>> _defaultValues = new()
-        {
-            { typeof(string), () => "_" },
-            { typeof(bool), () => true },
-            { typeof(short), () => (short)1 },
-            { typeof(int), () => 1 },
-            { typeof(uint), () => 1u },
-            { typeof(long), () => 1L },
-            { typeof(ulong), () => 1ul },
-            { typeof(decimal), () => 1m },
-            { typeof(double), () => 1.0d },
-            { typeof(float), () => 1.0f },
-            { typeof(char), () => '_' },
-            { typeof(byte), () => (byte)('_') },
-            { typeof(sbyte), () => (sbyte)1 },
-            { typeof(DateTime), () => DateTime.Now },
-            { typeof(object), () => "object" },
-        };
-
         public EntityValueProvider() : this(null) { }
 
         public EntityValueProvider(IEntityGenerationConfig config)
         {
-            _config = config ?? new EntityGenerationConfig()
-            {
-                MinListSize = 1,
-                MaxListSize = 5,
-                RandomizeListSize = true,
-                ObjectNullableChance = 0.0,
-                PrimitiveNullableChance = 0.0,
-                MaxRecursionDepth = 3,
-                ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
-                TypeInterceptorValueProviders = _defaultValues,
-                AttributeHandlers = new Dictionary<Attribute, IAttributeHandler>()
-            };
+            _config = config ?? new EntityGenerationConfig();
         }
 
-        private bool GenerateNullable(double nullableChance, Type type)
+        private bool GenerateNullable(GenerationOption option, Type type)
         {
+            _config.OptionChances.TryGetValue(option, out var nullableChance);
             return nullableChance > _epsilon && nullableChance >= _random.NextDouble() + _epsilon;
         }
 
@@ -68,8 +39,7 @@ namespace AutoPopulate.Implementations
         public bool HasDefaultValue(Type type)
         {
             return _config.TypeInterceptorValueProviders.ContainsKey(type) ||
-                   _defaultValues.ContainsKey(type) ||
-                   (Nullable.GetUnderlyingType(type) is Type underlyingType && _defaultValues.ContainsKey(underlyingType));
+                   (Nullable.GetUnderlyingType(type) is Type underlyingType && _config.TypeInterceptorValueProviders.ContainsKey(underlyingType));
         }
 
         public object GetDefaultValue(Type type, bool isIndex)
@@ -80,17 +50,17 @@ namespace AutoPopulate.Implementations
             Func<object> value;
             if (Nullable.GetUnderlyingType(type) is Type underlyingType)
             {
-                if (!isIndex && GenerateNullable(_config.PrimitiveNullableChance, type))
+                if (!isIndex && GenerateNullable(GenerationOption.NullablePrimitiveChance, type))
                     return null;
-                return _defaultValues.TryGetValue(underlyingType, out value) ? value() : Activator.CreateInstance(underlyingType)!;
+                return _config.TypeInterceptorValueProviders.TryGetValue(underlyingType, out value) ? value() : Activator.CreateInstance(underlyingType)!;
             }
 
-            return _defaultValues.TryGetValue(type, out value) ? value() : Activator.CreateInstance(type)!;
+            return _config.TypeInterceptorValueProviders.TryGetValue(type, out value) ? value() : Activator.CreateInstance(type)!;
         }
 
         public object CreateInstance(Type type)
         {
-            if (type.IsClass && GenerateNullable(_config.ObjectNullableChance, type))
+            if (type.IsClass && GenerateNullable(GenerationOption.NullableObjectChance, type))
                 return null;
 
             if (type.IsGenericType)

@@ -22,7 +22,7 @@
             Assert.That(result, Is.Not.Empty);
             Assert.That(result.Count, Is.GreaterThanOrEqualTo(Config.MinListSize));
             Assert.That(result.Count, Is.LessThanOrEqualTo(Config.MaxListSize));
-            if (Config.PrimitiveNullableChance > 0.5)
+            if (Config.OptionChances.TryGetValue(GenerationOption.NullablePrimitiveChance, out var chance) && chance > 0.5)
             {
                 Assert.That(result, Contains.Value(null));
             }
@@ -31,7 +31,7 @@
         [Test]
         public void Should_Generate_All_Nullable_Doubles()
         {
-            Config.PrimitiveNullableChance = 1.0;
+            Config.OptionChances[GenerationOption.NullablePrimitiveChance] = 1.0;
             List<double?> result = EntityGenerator.CreateFake<List<double?>>();
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.Not.Empty);

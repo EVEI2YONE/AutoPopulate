@@ -6,7 +6,7 @@
         [Test]
         public void Should_Be_Null()
         {
-            Config.ObjectNullableChance = 1.0;
+            Config.OptionChances[GenerationOption.NullableObjectChance] = 1;
             var result = EntityGenerator.CreateFake<NullableObject>();
             Assert.That(result, Is.Null);
         }

@@ -4,13 +4,10 @@ using System.Text;
 
 namespace AutoPopulate
 {
-    /// <summary>
-    /// Enum for handling references in recursive objects.
-    /// </summary>
-    public enum RecursionReferenceBehavior
+    public enum GenerationOption
     {
-        NewInstance,
-        ExistingReference,
-        NullReference
+        NullablePrimitiveChance,
+        NullableObjectChance,
+        RecursionExistingReferenceChance //not implemented yet
     }
 }

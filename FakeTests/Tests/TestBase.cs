@@ -41,11 +41,15 @@ namespace FakeTests.Tests
                 MinListSize = 2,
                 MaxListSize = 5,
                 RandomizeListSize = true,
-                ObjectNullableChance = 0.0,
-                PrimitiveNullableChance = 0.0,
                 MaxRecursionDepth = 3,
-                ReferenceBehavior = RecursionReferenceBehavior.NewInstance,
-                TypeInterceptorValueProviders = _defaultValues
+                TypeInterceptorValueProviders = _defaultValues,
+                AttributeHandlers = new Dictionary<Attribute, IAttributeHandler>(),
+                OptionChances = new Dictionary<GenerationOption, double>()
+                {
+                    { GenerationOption.NullableObjectChance, 0 },
+                    { GenerationOption.NullablePrimitiveChance, 0 },
+                    { GenerationOption.RecursionExistingReferenceChance, 0 },
+                }
             };
 
             EntityGenerator = new EntityGenerator(config: Config);
@@ -58,11 +62,15 @@ namespace FakeTests.Tests
                 MinListSize = 1,
                 MaxListSize = 1,
                 RandomizeListSize = false,
-                ObjectNullableChance = 0.0,
-                PrimitiveNullableChance = 0.0,
                 MaxRecursionDepth = 3,
                 TypeInterceptorValueProviders = _defaultValues,
-                ReferenceBehavior = RecursionReferenceBehavior.NewInstance
+                AttributeHandlers = new Dictionary<Attribute, IAttributeHandler>(),
+                OptionChances = new Dictionary<GenerationOption, double>()
+                {
+                    { GenerationOption.NullableObjectChance, 0 },
+                    { GenerationOption.NullablePrimitiveChance, 0 },
+                    { GenerationOption.RecursionExistingReferenceChance, 0 },
+                }
             };
 
             EntityGeneratorOrig = new EntityGenerator(config: ConfigOrig);
