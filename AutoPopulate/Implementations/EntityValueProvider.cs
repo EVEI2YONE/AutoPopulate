@@ -36,6 +36,11 @@ namespace AutoPopulate.Implementations
             _attributeHandlers[typeof(T)] = handler;
         }
 
+        public void RegisterTypeInterceptor(Type type, Func<object> valueProvider)
+        {
+            _config.TypeInterceptorValueProviders[type] = valueProvider;
+        }
+
         public bool HasDefaultValue(Type type)
         {
             return _config.TypeInterceptorValueProviders.ContainsKey(type) ||

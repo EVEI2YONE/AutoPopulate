@@ -9,12 +9,9 @@ namespace AutoPopulate.Interfaces
     /// </summary>
     public interface IEntityGenerationConfig
     {
-        // List Generation
         public int MinListSize { get; set; }
         public int MaxListSize { get; set; }
         public bool RandomizeListSize { get; set; }
-
-        // Recursive Object Handling
         public int MaxRecursionDepth { get; set; }
         public Dictionary<Type, Func<object>> TypeInterceptorValueProviders { get; set; }
         public Dictionary<Attribute, IAttributeHandler> AttributeHandlers { get; set; }

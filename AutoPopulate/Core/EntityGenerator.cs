@@ -30,7 +30,7 @@ namespace AutoPopulate.Core
             _typeMetadataCache = new TypeMetadataCache();
             _entityValueProvider = new EntityValueProvider();
             _config = _entityValueProvider.Config;
-            RegisterAutoPopulateAttributeHandlers();
+            SetUp();
         }
 
         public EntityGenerator(IEntityGenerationConfig config)
@@ -38,12 +38,25 @@ namespace AutoPopulate.Core
             _typeMetadataCache = new TypeMetadataCache();
             _entityValueProvider = new EntityValueProvider(config);
             _config = config;
-            RegisterAutoPopulateAttributeHandlers();
+            SetUp();
         }
 
-        private void RegisterAutoPopulateAttributeHandlers()
+        private void SetUp()
         {
+            foreach (var kvp in _config.TypeInterceptorValueProviders)
+            {
+                _entityValueProvider.RegisterTypeInterceptor(kvp.Key, kvp.Value);
+            }
+
             _entityValueProvider.RegisterAttributeHandler<AutoPopulateAttribute>(new AutoPopulateValueHandler());
+            var valueProviderType = _entityValueProvider.GetType();
+            var methodInfo = valueProviderType.GetMethod("RegisterAttributeHandler");
+
+            foreach (var kvp in _config.AttributeHandlers)
+            {
+                var genericMethod = methodInfo.MakeGenericMethod(kvp.Key.GetType());
+                genericMethod.Invoke(_entityValueProvider, new object[] { kvp.Value });
+            }
         }
 
         public T CreateFake<T>()
