@@ -32,7 +32,7 @@ AutoPopulate uses the IEntityGenerationConfig interface to control key aspects o
 - **Recursive Object Handling:** Limits for recursion depth and handling of references to avoid circular dependency issues.
 
 ## IEntityGenerationConfig
-# Below is the definition of the configuration interface:
+### Below is the definition of the configuration interface:
 
 ```csharp
 public interface IEntityGenerationConfig
@@ -78,7 +78,7 @@ EntityGenerator = new EntityGenerator(config: Config);
 ```
 
 ## Default types supported
-# Can be overriden via TypeInterceptorValueProviders
+### Can be overriden via TypeInterceptorValueProviders
 ```csharp
 private readonly Dictionary<Type, Func<object>> DefaultTypeInterceptorValueProviders = new()
 {
